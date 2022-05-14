@@ -7,8 +7,8 @@ class subscription(models.Model):
     subscriber = models.ForeignKey(User, on_delete=models.CASCADE, related_name='subscriptions')
     is_active = models.BooleanField(default=True)
     auto_draft = models.BooleanField(default=True)
-    begin_date = models.CharField(max_length=50)
-    end_date = models.CharField(max_length=50)
+    begin_date = models.DateTimeField()
+    end_date = models.DateTimeField()
     st_subId = models.CharField(max_length=500)
     
     @property

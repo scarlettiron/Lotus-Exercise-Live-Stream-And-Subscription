@@ -7,8 +7,8 @@ from .models import calendar, appointment, classSessionId
 class classSessionId_serializer(serializers.ModelSerializer):
     class Meta:
         model = classSessionId
-        fields = ['pk', 'hour', 'day', 'month', 'year', 
-                  'classPackage', 'instructor_logged_on', 'number_of_attendees']
+        fields = ['pk', 'start_time', 'end_time', 'classPackage', 
+                  'instructor_logged_on', 'number_of_attendees']
         read_only_fields = ['number_of_attendees']
         
         

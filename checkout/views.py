@@ -17,7 +17,7 @@ class purchase_post(generics.GenericAPIView):
         try:
             Post = post.objects.get(pk=post_id)
         except:
-            return Response(status = 401)
+            return Response(status = 404)
         
         customer = stripeCustomer(request.user).findCreateCustomerId().stripeCustomer
 
@@ -26,9 +26,9 @@ class purchase_post(generics.GenericAPIView):
             if intent_promise:
                 return JsonResponse(intent_promise, status=201, safe=False)
             else:
-                return Response(status=401)
+                return Response(status=400)
         else:
-            return Response(status=401)
+            return Response(status=400)
         
     def put(self, request, *args, **kwargs):
         intent = request.data.get('payment_intentId', None)
@@ -46,7 +46,7 @@ class purchase_subscription(generics.GenericAPIView):
         creatorid = self.kwargs['creatorid']
         customer = stripeCustomer(request.user).findCreateCustomerId()
         if not customer:
-            return Response('could not find customer id', status=401)
+            return Response('could not find customer id', status=404)
         try:
             creator = custom_profile.objects.get(pk = creatorid)
         except:
@@ -56,7 +56,7 @@ class purchase_subscription(generics.GenericAPIView):
             new_sub = StripeUserSubscription(creator=creator, subscriber = customer.stripeCustomer).findCreateSubProductId()
             subDetails = new_sub.createUserSubscription()
         except:
-            return Response('could not create subscription', status=401)
+            return Response('could not create subscription', status=400)
         
 
         return JsonResponse({'subscription_id':subDetails.st_subscription.id, 
@@ -89,32 +89,45 @@ class purchase_class(generics.GenericAPIView):
         try:
             package = publicPackage.objects.get(pk=classId)
         except:
-            return Response('class not found', statuc=401)
+            return Response('class not found', statuc=404)
         
-        customerInfo = stripeCustomer(request.user).findCreateCustomerId()
+        customerInfo = stripeCustomer(request.user).findCreateCustomerId().stripeCustomer
         
         if not customerInfo:
-            return Response('cannot find customer info', status=401)
+            return Response('cannot find customer info', status=404)
         
         begin_purchase = PuchaseLiveClass(classObj=package, purchaser=request.user, stripeCustomer=customerInfo)
         purchase = begin_purchase.findCreateClassProductId()
+
         if not purchase:
-            return Response('cannot find product', status=401)
+            return Response('cannot find product', status=404)
         
-        purchase.purchaseClass()
+        intent_promise = purchase.purchaseClass()
         
         if purchase:
-            return Response(purchase, status = 201)
-        return Response('error', status = 405)
+            return JsonResponse(intent_promise, status=201, safe=False)
+        return Response('error', status = 400)
         
         
     def put(self, request, *args, **kwargs):
-        st_intentId = request.data.GET('st_intentId', None)
-        
+        print("starting put request")
+        st_intentId = request.data.get('payment_intentId', None)
         if not st_intentId:
-            return Response('intent id needed', status = 401)
+            return Response('intent id needed', status = 400)
         
-        purchase = PuchaseLiveClass(purchaser=request.user, st_intentId=st_intentId).completePurchase()
+        try:
+            Class = publicPackage.objects.get(pk=self.kwargs['classid'])
+        except:
+            return Response('cannot find class', status=404)
+        
+        purchase_process = PuchaseLiveClass(purchaser=request.user, st_intentId=st_intentId, classObj=Class)
+        purchase = purchase_process.completePurchase()
         if purchase:
-            return Response(status = 201)
-        return Response(status=405)
+            appointments = purchase_process.createAppointment(requestData = request.data)
+            print(appointments)
+            if appointments:
+                return JsonResponse({'status':"success"}, status = 201, safe=False)
+            print("problem with appointments")
+            return Response(status=400)
+        print("no purchase")
+        return Response(status=400)
