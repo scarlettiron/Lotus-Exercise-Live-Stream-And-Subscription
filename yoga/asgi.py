@@ -4,6 +4,7 @@ from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 from django.core.asgi import get_asgi_application
 import chat.routing
+import classPackages.routing
 ## for socket security limits the host allowed to access
 from channels.security.websocket import AllowedHostsOriginValidator
 ## for socket sesions
@@ -17,7 +18,8 @@ application = ProtocolTypeRouter({
   
   "websocket": AllowedHostsOriginValidator(AuthMiddlewareStack(SessionMiddlewareStack(
         URLRouter(
-            chat.routing.websocket_urlpatterns
+            chat.routing.websocket_urlpatterns,
+            classPackages.routing.websocket_urlpatterns,
         )
   ))),
 })

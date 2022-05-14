@@ -1,13 +1,18 @@
 import stripe
 from django.conf import settings
 from datetime import datetime, timedelta
-from classPackages.models import publicPackage, publicPackageProductId
+from classPackages.models import hours, month, publicPackage, publicPackageProductId
+from booking.models import classSessionId, appointment
 
 from users.models import customerId
 from posts.models import  post, postProductId
 from subscription.models import subscription, subscription_product
 from userTransactions.models import UserTransactionItem
 from siteTally.models import siteTransaction
+
+import pendulum
+from django.utils.dateparse import parse_datetime
+from dateutil.parser import *
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -348,9 +353,10 @@ class StripeUserSubscription:
                                                       default_payment_method = intent['payment_method'])
         except:
             return False
-                        
-        begin_date = datetime.utcnow()
-        end_date = datetime.utcnow() + timedelta(days=30)
+                       
+        begin_date = pendulum.now('utc').to_iso8601_string()
+        end_date = pendulum.now('utc').add(months=1).to_iso8601_string()
+        
         try:
             localSub = subscription.objects.get(creator = self.creator, subscriber = self.subscriber)
             localSub.begin_date = begin_date
@@ -437,12 +443,16 @@ class PuchaseLiveClass:
         self.st_intentId = st_intentId
         
     def findCreateClassProductId(self):
+        if not self.classObj:
+            raise Exception('need local public package obj')
         try:
             classProductId = publicPackageProductId.objects.get(package=self.classObj)
             self.localClassProductObj = classProductId
+            print('found product')
             return self
         except:
             try:
+                print('creating product')
                 classProductId = stripe.Product.create(
                     description = f'class: {self.classObj.pk} | type:classPackage', 
                     name = f"classId: {self.classObj.pk}",
@@ -450,11 +460,12 @@ class PuchaseLiveClass:
                     metadata = {
                         'type': 'classPackage',
                         'site':settings.SITE_NAME,
-                        'user_id':self.classObj.package.user
+                        'user_id':self.classObj.user
                     }
                 )
-                
+                print('created product')
                 #create stripe price object for stripe product
+                print('creating price')
                 price = stripe.Price.create(
                     product = classProductId['id'],
                     unit_amount = self.classObj.price_units,
@@ -464,13 +475,14 @@ class PuchaseLiveClass:
                     'user_id':self.classObj.user.pk,
                     }
                 )
-
+                print('created price')
+                print('creating local class product obj')
                 localClassObj = publicPackageProductId.objects.create(
                 package=self.classObj,
                 st_productId = classProductId['id'],
                 st_priceId = price['id']
                 )
-                
+                print('created local class obj product id')
                 self.localClassProductObj = localClassObj
                 return self
             
@@ -486,7 +498,7 @@ class PuchaseLiveClass:
                 customer = self.stripeCustomer.customerId,
                 receipt_email = self.stripeCustomer.customerEmail,
                 metadata = {
-                    'purchase_type': 'post',
+                    'purchase_type': 'classPackage',
                     'obj_id':self.classObj.pk
                 }
                 )      
@@ -499,13 +511,16 @@ class PuchaseLiveClass:
             raise Exception('need payment intent id and user obj')
         try:
             intent = stripe.PaymentIntent.retrieve(self.st_intentId)
+
             if intent['metadata']['purchase_type'] == 'classPackage': 
-                classPackage = publicPackage.objects.get(pk=intent['metadata']['obj_id'])
+                classPackage = publicPackage.objects.get(pk=int(intent['metadata']['obj_id']))
             else:
                 return False
-            CustomerId = stripeCustomer(self.purchaser).findCreateCustomerId()
+            CustomerId = stripeCustomer(self.purchaser).findCreateCustomerId().stripeCustomer
+
         except:
             return False
+
         if intent['status'] == 'succeeded':
             try:
                 UserTransactionItem.objects.create(
@@ -531,4 +546,51 @@ class PuchaseLiveClass:
             except:
                 return False
 
+    def createAppointment(self, requestData):
+        print(requestData)
+        try:
+            print('getting sessions id')
+            sessionId = classSessionId.objects.get(classPackage = self.classObj)
+            self.classSessionId = sessionId
+            print(self.classSessionId)
+        except:
+            try:
+                print("creating new session id")
+                startTime = requestData['start_time']
+                endTime = requestData['end_time']
+                print(startTime)
+                print(endTime)
+                print(self.classObj)
+                sessionId = classSessionId.objects.create(
+                    classPackage = self.classObj,
+                    start_time = startTime,
+                    end_time = endTime
+                )
+                print(sessionId)
+                self.classSessionId = sessionId
+            except:
+                return False
+            
+        try:
+            print('creating user appointment')
+            userAppointment = appointment.objects.create(
+                packageSessionId = self.classSessionId,
+                user = self.purchaser
+            )
+        except:
+            return False
+        
+        try:
+            creatorAppointment = appointment.objects.get(user = self.classObj.user, 
+                                                            packageSessionId = self.classSessionId,
+                                                            is_instructor = True)
+            return True
+        except:
+            try:
+                creatorAppointment = appointment.objects.create(user = self.classObj.user, 
+                                                                packageSessionId = self.classSessionId,
+                                                               is_instructor = True)
+                return True
+            except:
+                return False
             

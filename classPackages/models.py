@@ -12,8 +12,6 @@ class dayInt(models.Model):
     
 class hours(models.Model):
     hour = models.IntegerField()
-    am = models.BooleanField(default=False)
-    pm = models.BooleanField(default=False)
     
 
 class month(models.Model):
@@ -54,7 +52,7 @@ class publicPackage(models.Model):
     def price(self):
         units = int(self.price_units)
         if units != 0:
-            return units / 100
+            return round(units / 100, 2)
         return self.price_units
 
 
