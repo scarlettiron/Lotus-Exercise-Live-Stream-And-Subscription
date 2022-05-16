@@ -1,6 +1,7 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
+from django.dispatch import receiver
 from booking.models import classSessionId, appointment
 
 
@@ -13,7 +14,7 @@ def verify_user(requesting_user, thread_id):
     except:
         return False  '''
 
-class group_class_consumer(AsyncWebsocketConsumer):
+class groupClassConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.user = self.scope['user']
         self.room_name = self.scope['url_route']['kwargs']['room_name']
@@ -44,9 +45,11 @@ class group_class_consumer(AsyncWebsocketConsumer):
         text_data_json = json.loads(text_data)
         type = text_data_json['type']
         sender = text_data_json['sender']
+        receiver = text_data_json['receiver']
         thread = text_data_json['thread']
         body = text_data_json['body']
         signal = text_data_json['candidateSignal']
+        instructor_logged_on = text_data_json['instructor_logged_on']
 
         # Send message to room group
         await self.channel_layer.group_send(
@@ -54,70 +57,84 @@ class group_class_consumer(AsyncWebsocketConsumer):
             {
                 'type': type,
                 'sender':sender,
+                'receiver':receiver,
                 'thread':thread,
                 'body':body,
+                'instructor_logged_on':instructor_logged_on,
                 'candidateSignal':signal
             }
         )
 
 
-    #send a regular text message
-    async def chat_message(self, event):
-        print('chat_message')
+    #emit from instructor if instructor is logged on
+    async def instructor_logged_on(self, event):
+        print('instructor_has_joined')
         type = event['type']
         sender = event['sender']
+        receiver = event['receiver']
         thread = event['thread']
-        body = event['body']
+        instructor_logged_on = event['instructor_logged_on']
         
         await self.send(text_data=json.dumps({
             'type':type,
             'thread':thread,
             'sender':sender,
-            'body':body
+            'receiver':receiver,
+            'instructor_logged_on':instructor_logged_on,
         }))
         
+    #emits from viewer to see if instructor is logged on    
+    async def is_instructor_logged_on(self, event):
+        print('is_instructor_logged_on')
+        type = event['type']
+        thread = ['thread']
+        sender = event['sender']
+        receiver = event['receiver']
+        
+        await self.send(text_data = json.dumps({
+            'type':type,
+            'thread':thread,
+            'sender':sender, 
+            'receiver':receiver
+        }))   
+        
 
-    #send call request with peer candidate signal
+    #send call request with peer candidate signal from viewer to instructor
     async def call_request(self, event):
         print('call request')
         type = event['type']
         thread = event['thread']
         sender = event['sender']
+        receiver = event['receiver']
         candidateSignal = event['candidateSignal']
         
         await self.send(text_data=json.dumps({
             'type':type,
             'thread':thread,
             'sender':sender,
+            'receiver':receiver,
             'candidateSignal':candidateSignal
         }))
 
 
-    #answer call with responding peer candidate signal
+    #answer viewer call with responding peer candidate signal from instructor
     async def accept_call_request(self, event):
         print('accept call request')
         type = event['type']
         thread = event['thread']
         sender = event['sender']
+        receiver = event['receiver']
         candidateSignal = event['candidateSignal']
         
         await self.send(text_data=json.dumps({
             'type':type,
             'thread':thread,
             'sender':sender,
+            'receiver':receiver,
             'candidateSignal':candidateSignal
         }))
         
-    async def decline_call_request(self, event):
-        print('decline call request')
-        type = event['type']
-        thread = ['thread']
-        sender = event['sender']
         
-        await self.send(text_data = json.dumps({
-            'type':type,
-            'thread':thread,
-            'sender':sender
-        }))
+
         
     

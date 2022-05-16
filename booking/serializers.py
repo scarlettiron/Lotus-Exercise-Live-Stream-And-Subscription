@@ -2,14 +2,18 @@ from attr import field
 from rest_framework import serializers
 from .models import calendar, appointment, classSessionId
 
+from classPackages.serializers import publicPackage_serializer
+
 
 
 class classSessionId_serializer(serializers.ModelSerializer):
+    classPackage = publicPackage_serializer()
+    
     class Meta:
         model = classSessionId
         fields = ['pk', 'start_time', 'end_time', 'classPackage', 
-                  'instructor_logged_on', 'number_of_attendees']
-        read_only_fields = ['number_of_attendees']
+                  'instructor_logged_on']
+        #read_only_fields = ['number_of_attendees']
         
         
 class appointment_serializer(serializers.ModelSerializer):
