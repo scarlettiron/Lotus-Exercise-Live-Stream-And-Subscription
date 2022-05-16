@@ -1,7 +1,14 @@
 from attr import field
 from rest_framework import serializers
 from .models import hours, package_days, publicPackage
+from users.models import custom_profile
 
+
+
+class prefetch_user_serializer(serializers.ModelSerializer):
+    class Meta:
+        model = custom_profile
+        fields = ['pk','username','pic','banner', 'first_name','last_name','subscription', 'slug']
 
 class hours_serializer(serializers.ModelSerializer):
     class Meta:
@@ -14,6 +21,7 @@ class packageDays_serializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class publicPackage_serializer(serializers.ModelSerializer):
+    user = prefetch_user_serializer()
     days_available = packageDays_serializer()
     from_time = hours_serializer()
     to_time = hours_serializer()
