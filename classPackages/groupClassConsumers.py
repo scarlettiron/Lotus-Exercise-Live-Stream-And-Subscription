@@ -5,14 +5,15 @@ from django.dispatch import receiver
 from booking.models import classSessionId, appointment
 
 
-''' @database_sync_to_async
-def verify_user(requesting_user, thread_id):
+@database_sync_to_async
+def verify_user(requesting_user, class_session_id):
     try:
-        Thread = thread.objects.get(pk = thread_id)
-        if Thread.user1 == requesting_user or Thread.user2 == requesting_user:
+        Thread = appointment.objects.filter(packageSessionId = class_session_id, user=requesting_user).count()
+        if Thread == 1:
             return True
+        return False
     except:
-        return False  '''
+        return False 
 
 class groupClassConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -20,17 +21,19 @@ class groupClassConsumer(AsyncWebsocketConsumer):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = 'chatcall_%s' % self.room_name
 
+        print(self.user)
         #verify that user is a thread member
             # Join room group
-        ''' Verify = verify_user(self.user, self.room_name)
-        if(Verify): '''
-        await self.channel_layer.group_add(
-            self.room_group_name,
-            self.channel_name
-        )
-        
-        await self.accept()
-        
+        Verify = verify_user(self.user, self.room_name)
+        if(Verify): 
+            await self.channel_layer.group_add(
+                self.room_group_name,
+                self.channel_name
+            )
+            print('joined awaiting accept')
+            await self.accept()
+            print('accepted')
+            
 
     async def disconnect(self, close_code):
         # Leave room group
@@ -41,7 +44,7 @@ class groupClassConsumer(AsyncWebsocketConsumer):
 
     # Receive message from WebSocket
     async def receive(self, text_data):
-        
+        print(text_data)
         text_data_json = json.loads(text_data)
         type = text_data_json['type']
         sender = text_data_json['sender']
@@ -73,6 +76,8 @@ class groupClassConsumer(AsyncWebsocketConsumer):
         sender = event['sender']
         receiver = event['receiver']
         thread = event['thread']
+        body = event['body']
+        candidateSignal = event['candidateSignal']
         instructor_logged_on = event['instructor_logged_on']
         
         await self.send(text_data=json.dumps({
@@ -80,7 +85,9 @@ class groupClassConsumer(AsyncWebsocketConsumer):
             'thread':thread,
             'sender':sender,
             'receiver':receiver,
+            'body':body,
             'instructor_logged_on':instructor_logged_on,
+            'candidateSignal':candidateSignal
         }))
         
     #emits from viewer to see if instructor is logged on    
@@ -90,12 +97,18 @@ class groupClassConsumer(AsyncWebsocketConsumer):
         thread = ['thread']
         sender = event['sender']
         receiver = event['receiver']
+        body = event['body']
+        candidateSignal = event['candidateSignal']
+        instructor_logged_on = event['instructor_logged_on ']
         
         await self.send(text_data = json.dumps({
             'type':type,
             'thread':thread,
             'sender':sender, 
-            'receiver':receiver
+            'receiver':receiver,
+            'body':body,
+            'instructor_logged_on':instructor_logged_on,
+            'candidateSignal':candidateSignal
         }))   
         
 
@@ -107,13 +120,17 @@ class groupClassConsumer(AsyncWebsocketConsumer):
         sender = event['sender']
         receiver = event['receiver']
         candidateSignal = event['candidateSignal']
+        instructor_logged_on = event['instructor_logged_on'],
+        body = event['body']
         
         await self.send(text_data=json.dumps({
             'type':type,
             'thread':thread,
             'sender':sender,
             'receiver':receiver,
-            'candidateSignal':candidateSignal
+            'candidateSignal':candidateSignal,
+            'instructor_logged_on':instructor_logged_on,
+            'body':body
         }))
 
 
@@ -125,13 +142,17 @@ class groupClassConsumer(AsyncWebsocketConsumer):
         sender = event['sender']
         receiver = event['receiver']
         candidateSignal = event['candidateSignal']
+        instructor_logged_on = event['instructor_logged_on'],
+        body = event['body']
         
         await self.send(text_data=json.dumps({
             'type':type,
             'thread':thread,
             'sender':sender,
             'receiver':receiver,
-            'candidateSignal':candidateSignal
+            'candidateSignal':candidateSignal,
+            'instructor_logged_on':instructor_logged_on,
+            'body':body
         }))
         
         
