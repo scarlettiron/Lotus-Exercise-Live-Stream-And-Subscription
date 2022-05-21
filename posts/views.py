@@ -13,10 +13,6 @@ from likeUnlike.models import post_like
 from comments.serializers import get_comment_serializer
 from comments.models import comment
 
-from yoga.stripe_utils import StripePostProduct
-import json
-from django.http import JsonResponse
-
 
 # Return all posts in database #
 class post_list(generics.ListAPIView):
@@ -214,7 +210,7 @@ class get_posts_exp(generics.ListAPIView, generics.GenericAPIView):
  
     
 class post_detail_update_delete(IsOwnerOrReadOnly_Mixin, generics.RetrieveUpdateDestroyAPIView):
-    queryset = post.objects.filter()
+    queryset = post.objects.filter().select_related('user')
     serializer_class = post_detail_serializer
 
     def get_queryset(self):
@@ -268,17 +264,3 @@ class search_all_posts(generics.ListAPIView):
         
         return modified_response    
         
-class exp(generics.GenericAPIView):
-    def get(self, request, *args, **kwargs):
-        postPk = self.kwargs['pk']
-        Post = post.objects.get(pk=postPk)
-        p = StripePostProduct(Post)
-        productId = p.findCreatePostProductId()
-        print('printing inside view')
-        print(productId.localProductID)
-        print('done printing inside view')
-        priceId = productId.retreiveStripePriceObj()
-        #print(priceId)
-        ##payload = postProductId_serializer(productId).data
-        payload = 'tata'
-        return JsonResponse(payload, safe=False)
