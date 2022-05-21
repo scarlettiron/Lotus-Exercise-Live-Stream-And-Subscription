@@ -156,6 +156,27 @@ class groupClassConsumer(AsyncWebsocketConsumer):
         }))
         
         
+    #send when instructor leaves the class
+    async def instructor_left(self, event):
+        print('accept call request')
+        type = event['type']
+        thread = event['thread']
+        sender = event['sender']
+        receiver = event['receiver']
+        candidateSignal = event['candidateSignal']
+        instructor_logged_on = event['instructor_logged_on'],
+        body = event['body']
+        
+        await self.send(text_data=json.dumps({
+            'type':type,
+            'thread':thread,
+            'sender':sender,
+            'receiver':receiver,
+            'candidateSignal':candidateSignal,
+            'instructor_logged_on':instructor_logged_on,
+            'body':body
+        }))
+        
 
         
     
