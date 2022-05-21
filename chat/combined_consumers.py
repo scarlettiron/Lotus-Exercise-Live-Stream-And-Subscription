@@ -114,11 +114,28 @@ class combinedChatConsumer(AsyncWebsocketConsumer):
         type = event['type']
         thread = ['thread']
         sender = event['sender']
+        candidateSignal = event['candidateSignal']
         
         await self.send(text_data = json.dumps({
             'type':type,
             'thread':thread,
-            'sender':sender
+            'sender':sender,
+            'candidateSignal':candidateSignal
         }))
+        
+        
+    async def call_ended(self, event):
+        type = event['type']
+        thread = event['thread']
+        sender = event['sender']
+        candidateSignal = event['candidateSignal']
+        
+        await self.send(text_data=json.dumps({
+            'type':type,
+            'thread':thread,
+            'sender':sender,
+            'candidateSignal':candidateSignal
+        }))
+        
         
     
