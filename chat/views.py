@@ -28,15 +28,9 @@ class get_messages(MessagesMixin, generics.ListCreateAPIView):
     lookup_field = 'thread'
     serializer_class = message_serializer
     
-    def get_queryet(self, request, *args, **kwargs):
-        thread_id = self.kwargs['thread']
-        try:
-            qs = message.objects.filter(thread = thread_id)
-        except:
-            qs = message.objects.none()
-        return qs
     
     def get(self, request, *args, **kwargs):
+        thread_id = self.kwargs['thread']
         Thread = thread.objects.filter(pk=thread_id).select_related('user1', 'user2')
         self.check_object_permissions(request, Thread[0])
         
