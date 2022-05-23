@@ -11,6 +11,7 @@ class UserTransactionItem(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     units = models.IntegerField()
     is_payment = models.BooleanField()
+    is_purchase = models.BooleanField()
     is_refund = models.BooleanField()
     date = models.DateTimeField(auto_now_add=True)
     subscription = models.ForeignKey(subscription, on_delete=models.SET_NULL, null=True, blank=True)
