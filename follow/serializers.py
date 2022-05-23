@@ -9,12 +9,12 @@ class follow_serializer(serializers.ModelSerializer):
         model = follow
         fields = ['pk', 'creator', 'follower']
     
-    def validate_follower(self, value):
+    '''     def validate_follower(self, value):
         request = self.context.get('request')
         user = request.user
         if value == request.user:
             return value
-        raise ValidationError('Unauthorized')
+        raise ValidationError('Unauthorized') '''
 
     
 class followers_serializer(serializers.ModelSerializer):

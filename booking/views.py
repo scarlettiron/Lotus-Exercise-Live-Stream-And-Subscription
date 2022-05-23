@@ -28,3 +28,14 @@ class appointment_detail(generics.GenericAPIView):
     
     def put(self, request, *args, **kwargs):
         pass
+    
+    
+class appointment_list(generics.ListAPIView):
+    serializer_class = appointment_serializer
+    def get_queryset(self):
+        user = self.kwargs['user']
+        qs  = appointment.objects.filter(user = user).select_related('packageSessionId', 
+                                                'packageSessionId__classPackage',
+                                                'packageSessionId__classPackage__user',
+                                                'packageSessionId__classPackage__days_available')
+        return qs

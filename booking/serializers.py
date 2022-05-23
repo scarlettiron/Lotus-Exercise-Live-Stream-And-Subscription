@@ -3,7 +3,7 @@ from rest_framework import serializers
 from .models import calendar, appointment, classSessionId
 
 from classPackages.serializers import publicPackage_serializer
-
+from users.serializers import prefetch_user_serializer
 
 
 class classSessionId_serializer(serializers.ModelSerializer):
@@ -21,8 +21,8 @@ class appointment_serializer(serializers.ModelSerializer):
     class Meta:
         model = appointment
         fields = ['pk', 'packageSessionId', 'logged_on',
-                  'package_title','customer', 'instructor']
-        read_only_fields = ['package_title', 'customer', 'instructor']
+                  'package_title','user', 'is_instructor']
+        read_only_fields = ['package_title']
 
 
 class calendar_serializer(serializers.ModelSerializer):
