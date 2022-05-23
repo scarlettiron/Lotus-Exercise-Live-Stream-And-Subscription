@@ -192,7 +192,7 @@ def create_transaction_records(payment_intentId, user):
     try:
         intent = stripe.PaymentIntent.retrieve(payment_intentId)
         if intent['metadata']['purchase_type'] == 'post': 
-            Post = post.objects.get(pk=intent['metadata']['obj_id'])
+            Post = post.objects.filter(pk=intent['metadata']['obj_id']).select_related('user')[0]
         else:
             return False
         CustomerId = stripeCustomer(user).findCreateCustomerId()
@@ -203,9 +203,20 @@ def create_transaction_records(payment_intentId, user):
             UserTransactionItem.objects.create(
                 user = user,
                 units = intent['amount'],
-                is_payment = True,
+                is_payment = False,
+                is_purchase = True,
                 is_refund = False,
                 post = Post
+            )
+            
+            #create record fro creator
+            UserTransactionItem.objects.create(
+                user = Post.user,
+                units = intent['amount'],
+                is_payment = True,
+                is_purchase = False,
+                is_refund = False,
+                classPackage = Post
             )
         except:
             return False
@@ -513,7 +524,7 @@ class PuchaseLiveClass:
             intent = stripe.PaymentIntent.retrieve(self.st_intentId)
 
             if intent['metadata']['purchase_type'] == 'classPackage': 
-                classPackage = publicPackage.objects.get(pk=int(intent['metadata']['obj_id']))
+                classPackage = publicPackage.objects.filter(pk=int(intent['metadata']['obj_id'])).select_related('user')[0]
             else:
                 return False
             CustomerId = stripeCustomer(self.purchaser).findCreateCustomerId().stripeCustomer
@@ -523,10 +534,22 @@ class PuchaseLiveClass:
 
         if intent['status'] == 'succeeded':
             try:
+                #create record for customer 
                 UserTransactionItem.objects.create(
                     user = self.purchaser,
                     units = intent['amount'],
+                    is_payment = False,
+                    is_purchase = True,
+                    is_refund = False,
+                    classPackage = classPackage
+                )
+                
+                #create record for creator
+                UserTransactionItem.objects.create(
+                    user = classPackage.user,
+                    units = intent['amount'],
                     is_payment = True,
+                    is_purchase = False,
                     is_refund = False,
                     classPackage = classPackage
                 )
