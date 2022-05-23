@@ -59,7 +59,7 @@ class creator_subscribers(subscriptionMixin, generics.ListAPIView):
         
 
 class user_subscriptions(subscriptionMixin, generics.ListAPIView):
-    queryset = subscription.objects.filter()
+    queryset = subscription.objects.filter().select_related('creator')
     serializer_class = subscriptions_serializer
     
     def get_queryset(self, *args, **kwargs):
