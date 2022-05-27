@@ -42,13 +42,15 @@ class user_detail(IsCreatorOrReadOnly_Mixin, generics.GenericAPIView, mixins.Ret
            mixins.UpdateModelMixin):
     queryset = custom_profile.objects.all()
     serializer_class = profile_serializer
-    parser_classes = [parsers.MultiPartParser, parsers.FormParser]
+    parser_classes = [parsers.MultiPartParser, parsers.FormParser, parsers.FileUploadParser]
     lookup_field = 'username'
     
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
     
     def put(self, request, *args, **kwargs):
+        data = self.request.body
+        print(data)
         return self.partial_update(request, *args, **kwargs)
     
  
