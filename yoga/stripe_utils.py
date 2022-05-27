@@ -209,7 +209,7 @@ def create_transaction_records(payment_intentId, user):
                 post = Post
             )
             
-            #create record fro creator
+             #create record for creator
             UserTransactionItem.objects.create(
                 user = Post.user,
                 units = intent['amount'],

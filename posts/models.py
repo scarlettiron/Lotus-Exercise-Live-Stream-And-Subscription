@@ -49,7 +49,7 @@ class post_manager(models.Manager):
 
 class post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts")
-    body = models.CharField(max_length=1000, blank=True, null=True)
+    body = models.CharField(max_length=3000, blank=True, null=True)
     price_units = models.IntegerField(default = 0)
     like_count = models.IntegerField(default = 0)
     comment_count = models.IntegerField(default = 0)
