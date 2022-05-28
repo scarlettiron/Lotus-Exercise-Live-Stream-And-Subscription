@@ -35,3 +35,7 @@ class UserTransactionItem(models.Model):
     class Meta:
         ordering = ['-date']
             
+            
+class creator_balance(models.Model):
+    balance = models.BigIntegerField()
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
