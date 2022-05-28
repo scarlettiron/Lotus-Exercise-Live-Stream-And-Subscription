@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'notifications.apps.NotificationsConfig',
     'userTransactions.apps.UsertransactionsConfig',
     'siteTally.apps.SitetallyConfig',
+    'verification.apps.VerificationConfig',
 ]
 
 MIDDLEWARE = [

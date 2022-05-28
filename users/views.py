@@ -1,4 +1,5 @@
 ### Rest Framework imports ###
+from psycopg2 import DataError
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import generics,  mixins, parsers
@@ -42,17 +43,18 @@ class user_detail(IsCreatorOrReadOnly_Mixin, generics.GenericAPIView, mixins.Ret
            mixins.UpdateModelMixin):
     queryset = custom_profile.objects.all()
     serializer_class = profile_serializer
-    parser_classes = [parsers.MultiPartParser, parsers.FormParser, parsers.FileUploadParser]
+    parser_classes = [parsers.MultiPartParser, parsers.FormParser, parsers.JSONParser]
     lookup_field = 'username'
     
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
     
     def put(self, request, *args, **kwargs):
-        data = self.request.body
-        print(data)
         return self.partial_update(request, *args, **kwargs)
     
+    
+class updateUserPics(IsCreatorOrReadOnly_Mixin, generics.GenericAPIView):
+    pass
  
 ### get list of all users ###
 class user_list(IsCreatorOrReadOnly_Mixin, generics.ListAPIView):
