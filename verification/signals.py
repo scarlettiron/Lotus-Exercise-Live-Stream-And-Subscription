@@ -12,7 +12,7 @@ def createrVerificationStaffTicker(sender, instance, created, **kwargs):
     print(created)
     if(created):
         staff_notification.objects.create(user = instance.user, 
-                                          type='verification', flag='green',
+                                          type = 'verification', flag = 'green',
                                           )
 
 #if verification status is set to passed, insure that staff ticket status is set to closed
