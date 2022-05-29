@@ -6,6 +6,14 @@ from staffNotifications.models import staff_notification
 ### notes ###
 #closeStaffTicket: figure out how to add description to model
 
+#create staff ticket when verification request is created
+@receiver(post_save, sender = verification)
+def createrVerificationStaffTicker(sender, instance, created, **kwargs):
+    print(created)
+    if(created):
+        staff_notification.objects.create(user = instance.user, 
+                                          type='verification', flag='green',
+                                          )
 
 #if verification status is set to passed, insure that staff ticket status is set to closed
 @receiver(post_save, sender=verification)
