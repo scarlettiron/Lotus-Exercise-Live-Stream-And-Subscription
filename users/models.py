@@ -1,16 +1,18 @@
-from distutils.command.upload import upload
-from re import S
 from django.db import models
 from django.contrib.auth.models import AbstractUser, UserManager
-from django.conf import settings
-from django.db.models import Q, signals
+from django.db.models import Q
 from django.utils.text import slugify
-from django.dispatch import receiver
 
-from subscription.models import subscription_product
-
+from django.conf import settings
 User = settings.AUTH_USER_MODEL
 
+
+
+class creator_balance(models.Model):
+    units = models.BigIntegerField()
+    
+    
+    
 
 class profile_queryset(models.QuerySet):
     def is_active(self):
@@ -49,6 +51,7 @@ class custom_profile(AbstractUser):
     is_instructor = models.BooleanField(default=False)
     is_verified = models.BooleanField(default=False)
     subscription_units = models.IntegerField(default = 0)
+    balance = models.OneToOneField(creator_balance, on_delete=models.SET_NULL, null = True)
 
     
     @property 
@@ -95,18 +98,4 @@ class customerId(models.Model):
 ''' class tag(models.Model):
     name = models.CharField(max_length=100)
     used = models.IntegerField() '''
-    
-### signals for user ###
 
-### check if profile picture is being changed
-# if so, delete original from s3 bucket
-''' @receiver(signals.pre_save, sender = custom_profile)
-def profile_pic_update(sender, instance, *args, **kwargs):
-    print("self: ")
-    print(sender)
-    print("instance: ")
-    print(instance)
-    print("args: ")
-    print(args)
-    print("kwargs: ")
-    print(kwargs) '''

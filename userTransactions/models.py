@@ -2,7 +2,10 @@ from django.db import models
 from subscription.models import subscription
 from posts.models import post
 from classPackages.models import publicPackage
-from users.models import customerId
+from users.models import creator_balance, custom_profile
+
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 from django.conf import settings
 User = settings.AUTH_USER_MODEL
@@ -36,6 +39,9 @@ class UserTransactionItem(models.Model):
         ordering = ['-date']
             
             
-class creator_balance(models.Model):
-    balance = models.BigIntegerField()
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+@receiver(post_save, sender = UserTransactionItem)
+def adjustCreatorBalance(sender, instance, created, **kwargs):
+    if sender.is_payment:
+        instance.user.balance.units += instance.units
+        instance.user.balance.save()
+
