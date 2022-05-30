@@ -1,12 +1,10 @@
-from logging import raiseExceptions
-import re
 from rest_framework import generics, mixins, parsers, response
 
 from .models import verification
 from .serializers import verification_serializer
 from .mixins import verification_mixin
 
-class verification_detail(generics.CreateAPIView, 
+class verification_detail(verification_mixin, generics.CreateAPIView, 
                           mixins.RetrieveModelMixin):
     model = verification
     queryset = verification.objects.get()
