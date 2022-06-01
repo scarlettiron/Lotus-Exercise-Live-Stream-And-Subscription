@@ -16,17 +16,5 @@ class post_like(models.Model):
 
 
 
-@receiver(signals.post_save, sender = post_like)
-def increase_like_count(sender, instance, **kwargs):
-    Post = instance.post
-    postLikeCount = Post.like_count + 1
-    Post.like_count = postLikeCount
-    Post.save()
-    
-@receiver(signals.pre_delete, sender=post_like)
-def decrease_like_count(sender, instance, **kwargs):
-    Post = instance.post
-    postLikeCount = Post.like_count - 1
-    Post.like_count = postLikeCount
-    Post.save()
+
     

@@ -18,17 +18,5 @@ class comment(models.Model):
     def __str__ (self):
         return f"{self.user.username} | {self.post.pk}"
 
-''' @receiver(signal=signals.post_save, sender=comment)
-def create_notification(sender, instance, *args, **kwargs):
-    creator = instance.post.user
-    user = instance.user
-    noti_type = notification_types.objects.get(type_option='post/comment')
-    notifications.objects.create(creator = creator, user=user, type=noti_type)
- '''
     
-@receiver(signal = signals.post_save, sender = comment)
-def increase_post_comment_count(sender, instance, *args, **kargs):
-    Post = instance.post
-    updated_count = Post.comment_count + 1
-    Post.comment_count = updated_count
-    Post.save()
+

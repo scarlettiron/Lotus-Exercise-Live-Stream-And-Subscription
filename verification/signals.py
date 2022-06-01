@@ -2,14 +2,14 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from .models import verification
 from staffNotifications.models import staff_notification
+from userNotifications.models import user_notification
 
 ### notes ###
 #closeStaffTicket: figure out how to add description to model
 
 #create staff ticket when verification request is created
 @receiver(post_save, sender = verification)
-def createrVerificationStaffTicker(sender, instance, created, **kwargs):
-    print(created)
+def createVerificationStaffTicket(sender, instance, created, **kwargs):
     if(created):
         staff_notification.objects.create(user = instance.user, 
                                           type = 'verification', flag = 'green',
@@ -33,7 +33,19 @@ def updateUserVerificationStatus(sender, instance, created, **kwargs):
         instance.user.is_instructor = True
         instance.user.save()
         
-        
+
+#create user notification         
 @receiver(post_save, sender = verification)
 def createUserNotification(sender, instance, created, **kwargs):
-    pass
+    if instance.status == 'passed':
+        user_notification.objects.create(
+            user = instance.user,
+            type = 'verification passed'
+        )
+        
+    if instance.status == 'declined':
+         user_notification.objects.create(
+            user = instance.user,
+            type = 'verification failed'
+        )       
+        

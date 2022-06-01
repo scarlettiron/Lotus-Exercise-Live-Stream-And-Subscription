@@ -130,8 +130,3 @@ class search_users_serializer(serializers.ModelSerializer):
         
     #def get_classes(self, obj):
         #classes = publicPackage.objects.filter()
-
-class p_ser(serializers.ModelSerializer):
-    class Meta:
-        model = custom_profile
-        fields = '__all__'
