@@ -323,14 +323,12 @@ class StripeUserSubscription:
     # returns True if successful, False otherwise
     def updateStripeProductPrice(self):
         try:
-            if self.creator.st_priceId:
-                priceId = self.creator.st_priceId
-            else:
-                priceId = self.localSubscriptionProduct.st_priceId
+            priceId = self.localSubscriptionProduct.st_priceId
         except:
             raise Exception("need stripe price id")   
         try:
-            newPrice = stripe.Price.modify(priceId, unit_amount=self.creator.subscription_units)
+            units = self.creator.subscription_units
+            newPrice = stripe.Price.modify(priceId, metadata = {'unit_amount':units})
             return True
         except:
             return False

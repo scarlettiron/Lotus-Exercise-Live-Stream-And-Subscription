@@ -14,15 +14,15 @@ User = settings.AUTH_USER_MODEL
 class profile_serializer(serializers.ModelSerializer):
     subscribed = serializers.SerializerMethodField('get_subscribed', read_only=True)
     following = serializers.SerializerMethodField(read_only=True)
-    is_owner = serializers.SerializerMethodField(read_only = True)
+
     class Meta:
         model = custom_profile
 
         fields = ['id','username','is_instructor','is_verified','pic','banner', 'bio', 
-                  'first_name', 'last_name', 'is_owner','subscribed', 'following','slug',
+                  'first_name', 'last_name','subscribed', 'following','slug',
                   'subscription_units', 'subscription']
         read_only_fields  = ['id','username','is_instructor','is_verified', 
-                             'subscribed','following', 'is_owner','slug']
+                             'subscribed','following', 'slug']
 
         
     def get_subscribed(self, obj):
@@ -53,9 +53,13 @@ class profile_serializer(serializers.ModelSerializer):
 
     def get_is_owner(self, obj):
         request = self.context.get('request')
-        if obj == request.user:
+        user = request.user
+        print(obj)
+        print(request)
+        print(user)
+        if obj == user:
             return True
-        return False
+        return False 
 
 
 class create_user_serializer(serializers.ModelSerializer):
@@ -126,4 +130,8 @@ class search_users_serializer(serializers.ModelSerializer):
         
     #def get_classes(self, obj):
         #classes = publicPackage.objects.filter()
-        
+
+class p_ser(serializers.ModelSerializer):
+    class Meta:
+        model = custom_profile
+        fields = '__all__'

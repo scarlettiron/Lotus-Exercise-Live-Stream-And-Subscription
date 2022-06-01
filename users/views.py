@@ -1,16 +1,19 @@
 ### Rest Framework imports ###
-from psycopg2 import DataError
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework import generics,  mixins, parsers
+from rest_framework import generics,  mixins, parsers, response
 
 ###Additional django imports ###
 from django.shortcuts import get_object_or_404
 
+from yoga.stripe_utils import StripeUserSubscription
+
 ##Custom Code imports ###
 from .models import custom_profile
-from .serializers import profile_serializer, create_user_serializer
+from .serializers import p_ser, profile_serializer, create_user_serializer
 from .mixins import IsCreatorOrReadOnly_Mixin
+
+from subscription.models import subscription_product
 
 
 
@@ -39,6 +42,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
     
 ### Get or update certain user ###
+### for updating users subscription price: see update_subscription_price further down
 class user_detail(IsCreatorOrReadOnly_Mixin, generics.GenericAPIView, mixins.RetrieveModelMixin, 
            mixins.UpdateModelMixin):
     queryset = custom_profile.objects.all()
@@ -100,5 +104,24 @@ class SearchUsers(generics.ListAPIView):
             search_results = qs.search_instructors(q)
             return search_results
         return custom_profile.objects.none()
-    
-             
+ 
+ 
+#this view is specifically for updating user subscription price   
+class update_subscription_price(IsCreatorOrReadOnly_Mixin ,generics.GenericAPIView):
+    def put(self, request, *args, **kwargs):
+        user = self.kwargs['pk']
+        price = int(request.data.get('price', None))
+        print(price)
+        if type(price) is int and price > 50:
+            print('trying to update')
+            user = custom_profile.objects.get(pk = user)
+            user.subscription_units = price
+            user.save()
+            stripeSub = StripeUserSubscription(user).findCreateSubProductId().updateStripeProductPrice()
+            if stripeSub:
+                serializer =  profile_serializer(user, context={'request':request}).data
+                return response.Response(serializer, status = 200)
+        
+        return response.Response(status = 404)
+        
+            
