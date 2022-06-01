@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'siteTally.apps.SitetallyConfig',
     'verification.apps.VerificationConfig',
     'staffNotifications.apps.StaffnotificationsConfig',
+    'userNotifications.apps.UsernotificationsConfig',
 ]
 
 MIDDLEWARE = [
