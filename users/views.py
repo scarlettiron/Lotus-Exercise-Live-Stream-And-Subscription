@@ -10,7 +10,7 @@ from yoga.stripe_utils import StripeUserSubscription
 
 ##Custom Code imports ###
 from .models import custom_profile
-from .serializers import p_ser, profile_serializer, create_user_serializer
+from .serializers import profile_serializer, create_user_serializer
 from .mixins import IsCreatorOrReadOnly_Mixin
 
 from subscription.models import subscription_product
