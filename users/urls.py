@@ -10,4 +10,5 @@ urlpatterns = [
     path('list/', v.user_list.as_view(), name="user-list"),
     path('create/', v.create_user.as_view(), name='user-create'),
     path('search/', v.SearchUsers.as_view(), name='active-user-search'),
+    path('subscription-price-update/<int:pk>/', v.update_subscription_price.as_view(), name='updateSubscriptionPrice'),
 ]
