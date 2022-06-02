@@ -12,6 +12,7 @@ from content.models import album, media, supportedMediaContentTypes as supported
 from likeUnlike.models import post_like
 from comments.serializers import get_comment_serializer
 from comments.models import comment
+from userTransactions.models import UserTransactionItem
 
 
 # Return all posts in database #
@@ -158,7 +159,7 @@ class get_posts_exp(generics.ListAPIView, generics.GenericAPIView):
     def get_queryset(self, *args, **kwargs):
         user = self.kwargs['user']
         try:
-            qs = post.objects.filter(user__username=user).order_by('-date')
+            qs = post.objects.filter(user__username=user).select_related('user').order_by('-date')
         except:
             qs = post.objects.none()
         return qs
@@ -167,11 +168,20 @@ class get_posts_exp(generics.ListAPIView, generics.GenericAPIView):
         modified_response = super().list(request, *args, **kwargs)
         creator = self.kwargs['user']
         user = self.request.user
+        
+        #check to see if any user likes creators post
         try:
             likes = post_like.objects.filter(user = user, post__user__username = creator).values_list('post', flat=True)
         except:
             likes = []
+        #check to see if user has purchased any of creators posts
+        try:
+            userPurchases = UserTransactionItem.objects.filter(user = user, post__user_username = creator).values_list('post', flat=True)
+        except:
+            userPurchases = []
+            
         modified_response.data['likes'] = likes
+        modified_response['purchases'] = userPurchases
         return modified_response
     
     
@@ -221,17 +231,30 @@ class post_detail_update_delete(IsOwnerOrReadOnly_Mixin, generics.RetrieveUpdate
     def retrieve(self, request, *args, **kwargs):
         pk = self.kwargs['pk']
         modified_response =  super().retrieve(request, *args, **kwargs)  
+        #get all comments on post
         try:     
             comments = comment.objects.filter(post__pk = pk).select_related('user').order_by('-date')
             serializer = get_comment_serializer(comments, many=True).data
         except:
             serializer = []
+        # get if user has liked the post
         try:
             likes = post_like.objects.filter(user = self.request.user, post__pk = pk).values_list('pk', flat=True)
         except:
             likes = []
+            
+        #check to see if user purchased post
+        try:
+            userPurchases = UserTransactionItem.objects.filter(user = self.request.user, post = pk)
+            if userPurchases:
+                has_purchased = True
+            
+        except:
+            has_purchased = False
+            
         modified_response.data['comments'] = serializer
         modified_response.data['likes'] = likes
+        modified_response.data['has_purchased'] = has_purchased
         return modified_response
         
     def put(self, request, *args, **kwargs):
