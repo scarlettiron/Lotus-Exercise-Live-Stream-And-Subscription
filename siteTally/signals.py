@@ -4,7 +4,7 @@ from django.dispatch import receiver
 from .models import siteTransaction
 from userTransactions.models import UserTransactionItem
 
-@receiver(post_save, sender=siteTransaction)
+''' @receiver(post_save, sender=siteTransaction)
 def create_user_transaction(self, instance, *args, **kwargs):
     try:
         UserTransactionItem.objects.create(
@@ -17,4 +17,4 @@ def create_user_transaction(self, instance, *args, **kwargs):
             classPackage = instance.classPackage,
         )
     except:
-        print('error')
+        print('error') '''

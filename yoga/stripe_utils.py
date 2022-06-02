@@ -198,41 +198,42 @@ def create_transaction_records(payment_intentId, user):
         CustomerId = stripeCustomer(user).findCreateCustomerId()
     except:
         return False
-    if intent['status'] == 'succeeded':
+    if intent['status'] == 'succeeded': 
         try:
+            price = int(intent['amount'])
             UserTransactionItem.objects.create(
                 user = user,
-                units = intent['amount'],
+                units = price,
                 is_payment = False,
                 is_purchase = True,
                 is_refund = False,
                 post = Post
             )
-            
-             #create record for creator
+        
+            #create record for creator
             UserTransactionItem.objects.create(
                 user = Post.user,
-                units = intent['amount'],
+                units = price,
                 is_payment = True,
                 is_purchase = False,
                 is_refund = False,
-                classPackage = Post
+                post = Post
             )
         except:
-            return False
+           return False
         
         try:
             siteTransaction.objects.create(
                 st_transaction_id = intent['id'],
-                customerId = CustomerId,
-                units = intent['amount'],
+                customerId = CustomerId.stripeCustomer,
+                units = price,
                 is_payment = True,
                 is_refund = False,
                 post = Post
             )
             return True
         except:
-            return False
+           return False
         
         
 
@@ -256,7 +257,6 @@ class StripeUserSubscription:
         try:
             productObj = subscription_product.objects.get(user=self.creator)
             self.localSubscriptionProduct = productObj
-            print('obj already exists')
             return self
         
         except:
