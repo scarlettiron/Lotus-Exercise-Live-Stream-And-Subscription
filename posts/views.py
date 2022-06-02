@@ -115,8 +115,14 @@ class post_search(generics.ListAPIView):
             likes = post_like.objects.filter(user = user).values_list('pk', flat=True)
         except:
             likes = []
+        
+        try:
+            userPurchases = UserTransactionItem.objects.filter(user = user).values_list('post', flat=True)
+        except:
+            userPurchases = []
             
         modified_response.data['likes'] = likes
+        modified_response.data['purchases'] = userPurchases
         
         return modified_response
     
@@ -141,8 +147,13 @@ class post_feed(generics.ListAPIView):
             likes = post_like.objects.filter(user = user).values_list('id', flat=True)
         except:
             likes = []
+        try:
+            userPurchases = UserTransactionItem.objects.filter(user = user).values_list('post', flat=True)
+        except:
+            userPurchases = []
             
         modified_response.data['likes'] = likes
+        modified_response.data['purchases']
         return modified_response
     
 
@@ -245,16 +256,13 @@ class post_detail_update_delete(IsOwnerOrReadOnly_Mixin, generics.RetrieveUpdate
             
         #check to see if user purchased post
         try:
-            userPurchases = UserTransactionItem.objects.filter(user = self.request.user, post = pk)
-            if userPurchases:
-                has_purchased = True
-            
+            userPurchases = UserTransactionItem.objects.filter(post__pk = pk).values_list('post', flat=True)
         except:
-            has_purchased = False
+            userPurchases = []
             
         modified_response.data['comments'] = serializer
         modified_response.data['likes'] = likes
-        modified_response.data['has_purchased'] = has_purchased
+        modified_response.data['purchases'] = userPurchases
         return modified_response
         
     def put(self, request, *args, **kwargs):
@@ -283,7 +291,13 @@ class search_all_posts(generics.ListAPIView):
         except:
             likes = []
             
+        try:
+            userPurchases = UserTransactionItem.objects.filter(user = user).values_list('post', flat=True)
+        except:
+            userPurchases = []
+            
         modified_response.data['likes'] = likes
+        modified_response.data['purchases'] = userPurchases
         
         return modified_response    
         
