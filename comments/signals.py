@@ -3,7 +3,7 @@ from django.dispatch import receiver
 from.models import comment
 from userNotifications.models import user_notification
 
-@receiver(post_save, comment)
+@receiver(post_save, sender = comment)
 def createPostCommentNotification(sender, instance, created, **kwargs):
     if created:
         user_notification.objects.create(type = 'post comment', 

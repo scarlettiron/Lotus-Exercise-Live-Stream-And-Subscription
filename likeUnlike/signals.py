@@ -3,7 +3,7 @@ from django.dispatch import receiver
 from.models import post_like
 from userNotifications.models import user_notification
 
-@receiver(post_save, post_like)
+@receiver(post_save, sender = post_like)
 def createPostLikeNotifcation(sender, instance, created, **kwargs):
     if created:
         user_notification.objects.create(type = 'post like',
