@@ -176,12 +176,12 @@ class get_posts_exp(generics.ListAPIView, generics.GenericAPIView):
             likes = []
         #check to see if user has purchased any of creators posts
         try:
-            userPurchases = UserTransactionItem.objects.filter(user = user, post__user_username = creator).values_list('post', flat=True)
+            userPurchases = UserTransactionItem.objects.filter(user = user, post__user__username = creator).values_list('post', flat=True)
         except:
             userPurchases = []
             
         modified_response.data['likes'] = likes
-        modified_response['purchases'] = userPurchases
+        modified_response.data['purchases'] = userPurchases
         return modified_response
     
     
