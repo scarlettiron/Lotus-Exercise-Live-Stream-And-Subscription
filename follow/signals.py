@@ -3,7 +3,7 @@ from django.dispatch import receiver
 from.models import follow
 from userNotifications.models import user_notification
 
-@receiver(post_save, sender = user_notification)
+@receiver(post_save, sender = follow)
 def createFollowNotification(sender, instance, created, **kwargs):
     if created:
         user_notification.objects.create(type = 'follow',
