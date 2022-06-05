@@ -40,12 +40,12 @@ def createUserNotification(sender, instance, created, **kwargs):
     if instance.status == 'passed':
         user_notification.objects.create(
             user = instance.user,
-            type = 'verification passed'
+            type = 'pass verification'
         )
         
     if instance.status == 'declined':
          user_notification.objects.create(
             user = instance.user,
-            type = 'verification failed'
+            type = 'fail verification'
         )       
         

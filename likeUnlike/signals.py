@@ -6,7 +6,7 @@ from userNotifications.models import user_notification
 @receiver(post_save, sender = post_like)
 def createPostLikeNotifcation(sender, instance, created, **kwargs):
     if created:
-        user_notification.objects.create(type = 'post like',
+        user_notification.objects.create(type = 'like post',
                                          user = instance.user,
                                          creator = instance.post.user
                                          )

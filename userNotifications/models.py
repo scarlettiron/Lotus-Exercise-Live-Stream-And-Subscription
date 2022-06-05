@@ -6,15 +6,15 @@ User = settings.AUTH_USER_MODEL
 
 
 notification_types = [
-    ('verification passed', 'Verification Passed'),
-    ('verification failed', 'Verification Failed'),
-    ('purchase refund', 'Purchase Refund'),
-    ('subscription purchase', 'Subscription Purchase'),
-    ('class purchase', 'Class Purchase'),
-    ('post purchase', 'Post Purchase'),
-    ('post like', 'Post Like'),
-    ('post comment', 'Post Comment'),
-    ('follw', 'Follow'),
+    ('passed verification', 'Verification Passed'),
+    ('failed verification', 'Verification Failed'),
+    ('refund', 'Purchase Refund'),
+    ('purchase subscription', 'Subscription Purchase'),
+    ('purchase class', 'Class Purchase'),
+    ('purchase post', 'Post Purchase'),
+    ('like post', 'Post Like'),
+    ('comment post', 'Post Comment'),
+    ('follow', 'Follow'),
     
 ]
 

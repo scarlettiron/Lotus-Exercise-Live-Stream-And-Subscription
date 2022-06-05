@@ -6,7 +6,8 @@ from userNotifications.models import user_notification
 @receiver(post_save, sender = comment)
 def createPostCommentNotification(sender, instance, created, **kwargs):
     if created:
-        user_notification.objects.create(type = 'post comment', 
+        user_notification.objects.create(type = 'comment post',
+                                         creator = instance.post.user,
                                          user = instance.user)
         
 @receiver(signal = post_save, sender = comment)

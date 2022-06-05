@@ -151,9 +151,9 @@ class post_feed(generics.ListAPIView):
             userPurchases = UserTransactionItem.objects.filter(user = user).values_list('post', flat=True)
         except:
             userPurchases = []
-            
+         
         modified_response.data['likes'] = likes
-        modified_response.data['purchases']
+        modified_response.data['purchases'] = userPurchases
         return modified_response
     
 
