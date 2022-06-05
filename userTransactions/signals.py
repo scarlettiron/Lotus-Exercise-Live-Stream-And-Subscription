@@ -36,7 +36,7 @@ def createNotification(sender, instance, created, **kwargs):
         
         #unfinished
         if instance.is_refund:
-            type = 'purchase refund'
+            type = 'refund'
         ##
             
         user_notification.objects.create(creator = creator, 
