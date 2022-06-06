@@ -1,11 +1,13 @@
-from ast import Subscript
+from django.db.models import Q
 from rest_framework import serializers
 from .models import custom_profile
 
-from subscription.models import subscription, subscription_product
+from subscription.models import subscription
 from follow.models import follow 
 from classPackages.models import publicPackage
 from classPackages.serializers import publicPackage_serializer
+from chat.models import thread
+
 from django.conf import settings
 User = settings.AUTH_USER_MODEL
 
@@ -14,15 +16,16 @@ User = settings.AUTH_USER_MODEL
 class profile_serializer(serializers.ModelSerializer):
     subscribed = serializers.SerializerMethodField('get_subscribed', read_only=True)
     following = serializers.SerializerMethodField(read_only=True)
+    existing_thread = serializers.SerializerMethodField(read_only = True)
 
     class Meta:
         model = custom_profile
 
         fields = ['id','username','is_instructor','is_verified','pic','banner', 'bio', 
                   'first_name', 'last_name','subscribed', 'following','slug',
-                  'subscription_units', 'subscription']
+                  'subscription_units', 'subscription', 'existing_thread']
         read_only_fields  = ['id','username','is_instructor','is_verified', 
-                             'subscribed','following', 'slug']
+                             'subscribed','following', 'slug', 'existing_thread']
 
         
     def get_subscribed(self, obj):
@@ -54,12 +57,23 @@ class profile_serializer(serializers.ModelSerializer):
     def get_is_owner(self, obj):
         request = self.context.get('request')
         user = request.user
-        print(obj)
-        print(request)
-        print(user)
         if obj == user:
             return True
         return False 
+    
+    def get_existing_thread(self, obj):
+        request = self.context.get('request')
+        user = request.user  
+        if obj == user:
+            return None
+        
+        try:
+            Thread = thread.objects.filter(Q(user1 = user, user2 = obj) |
+                                           Q(user1 = obj, user2 = user))[0]
+            return Thread.pk
+        except:
+            return None
+                  
 
 
 class create_user_serializer(serializers.ModelSerializer):

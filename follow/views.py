@@ -1,10 +1,11 @@
 from cgitb import lookup
-from rest_framework import generics, permissions, response
+from rest_framework import generics, permissions, response, mixins
 
 from .models import follow
 from .mixins import Follow_Mixin
 from .serializers import follow_serializer, followers_serializer, following_serializer
 from .permissions import isFollowerOrReadOnly
+
 
 
 
@@ -40,20 +41,21 @@ class following_users(Follow_Mixin, generics.ListCreateAPIView):
     
 
 
-class delete_follow(Follow_Mixin, generics.DestroyAPIView):
-    queryset = follow.objects.all()
-    serializer_class = following_serializer
-    lookup_field = ['creator']
+class delete_follow(Follow_Mixin, generics.GenericAPIView, mixins.DestroyModelMixin):
+    lookup_field = 'creator_id'
     ## rewrite this
     def get_queryset(self, *args, **kwargs):
         creator = self.kwargs['creator_id']
         user = self.request.user
         try:
-            Follow = follow.objects.filter(creator = creator, follower = user)
+            Follow = follow.objects.get(creator__pk = creator, follower__pk = user.pk)
+            print(Follow)
             return Follow
         except:
             return follow.objects.none()
-    
-    def perform_destroy(self, instance, *args, **kwargs):
-        super().perform_destroy(instance)
+        
+    def destroy(self, instance, *args, **kwargs):
+        print('inside follow destroy')
+        print(instance)
+        self.perform_destroy(instance)
         

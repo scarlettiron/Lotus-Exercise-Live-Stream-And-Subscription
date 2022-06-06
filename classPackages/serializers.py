@@ -52,6 +52,11 @@ class publicPackage_serializer(serializers.ModelSerializer):
                                                  days_available = available_days, 
                                                  from_time=fr_time, to_time=t_time)
         return new_class 
+  
+  
             
-            
+class classPckage_serializer(serializers.ModelSerializer):
+    class Meta:
+        model = publicPackage
+        fields = '__all__'     
         

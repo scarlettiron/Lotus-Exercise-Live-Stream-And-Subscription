@@ -16,7 +16,8 @@ class notification_list(generics.ListAPIView):
     def get_queryset(self, *args, **kwargs):
         try:
             qs = user_notification.objects.filter(Q(user = self.request.user) | 
-                                                  Q(creator = self.request.user)).select_related('user', 'creator')
+                                                  Q(creator = self.request.user)).select_related(
+                                                      'user', 'creator')
         except:
             qs = user_notification.objects.none()
         return qs
