@@ -2,10 +2,6 @@ from django.db import models
 from subscription.models import subscription
 from posts.models import post
 from classPackages.models import publicPackage
-from users.models import creator_balance, custom_profile
-
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 
 from django.conf import settings
 User = settings.AUTH_USER_MODEL

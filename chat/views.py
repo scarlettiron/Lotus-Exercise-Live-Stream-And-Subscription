@@ -1,7 +1,7 @@
 from rest_framework import generics
 from django.db.models import Q
 from .models import thread, message
-from.serializers import message_serializer, user_threads_serializer
+from.serializers import message_serializer, user_threads_serializer, create_thread_serializer
 from .mixins import MessagesMixin
 
 class list_create_thread(MessagesMixin, generics.ListCreateAPIView):
@@ -10,6 +10,12 @@ class list_create_thread(MessagesMixin, generics.ListCreateAPIView):
     serializer_class = user_threads_serializer
     
  
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return user_threads_serializer
+        if self.request.method == 'POST':
+            return create_thread_serializer
+ 
     def get_queryset(self, *args, **kwargs):
         user = self.request.user
         try:
@@ -17,7 +23,7 @@ class list_create_thread(MessagesMixin, generics.ListCreateAPIView):
         except:
             qs = thread.objects.none()
         return qs
-            
+           
         
 
 

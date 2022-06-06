@@ -61,24 +61,18 @@ class updateUserPics(IsCreatorOrReadOnly_Mixin, generics.GenericAPIView):
     pass
  
 ### get list of all users ###
-class user_list(IsCreatorOrReadOnly_Mixin, generics.ListAPIView):
+class user_list(IsCreatorOrReadOnly_Mixin, generics.ListCreateAPIView):
     queryset = custom_profile.objects.all()
     serializer_class = profile_serializer
     
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return profile_serializer
+        if self.request.method == 'POST':
+            return create_user_serializer
+    
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
-    
-    """ def perform_create(self, serializer):
-        if serializer.is_valid(raise_exception = True):
-            serializer.save()
-            return serializer.data
-        print("Nope") """
-
-    
-"""    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        return self.create(request, *args, **kwargs)  """
 
 
 ### create a user ###
