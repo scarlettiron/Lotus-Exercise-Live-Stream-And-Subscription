@@ -176,7 +176,7 @@ class get_posts_exp(generics.ListAPIView, generics.GenericAPIView):
         return qs
     
     def get(self, request, *args, **kwargs):
-        modified_response = super().list(request, *args, **kwargs)
+        modified_response = self.list(request, *args, **kwargs)
         creator = self.kwargs['user']
         user = self.request.user
         
