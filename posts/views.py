@@ -135,9 +135,12 @@ class post_feed(generics.ListAPIView):
     serializer_class = post_detail_serializer
     
     def get_queryset(self, *args, **kwargs):
-        qs = super().get_queryset(*args, **kwargs)
         user = self.request.user
-        search_results = qs.get_user_feed(user).select_related('user')
+        if user.is_authenticated:
+            qs = super().get_queryset(*args, **kwargs)
+            search_results = qs.get_user_feed(user).select_related('user')
+        else:
+            search_results = post.objects.all().select_related('user').order_by('-date')
         return search_results
     
     def get(self, request, *args, **kwargs):
