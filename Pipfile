@@ -59,6 +59,8 @@ PyJWT = "==2.3.0"
 pyOpenSSL = "==22.0.0"
 Twisted = "==22.4.0"
 pendulum = "*"
+django-rest-passwordreset = "*"
+django-anymail = "*"
 
 [dev-packages]
 

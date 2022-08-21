@@ -30,10 +30,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "debug_toolbar",
+    "anymail",
     'channels',
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
+    'djoser',
     'users.apps.UsersConfig',
     'profiles',
     'chat',
@@ -100,6 +102,14 @@ CHANNEL_LAYERS = {
     },
 }
 
+
+### send emails through mail gun
+EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
+ANYMAIL_MAILGUN_API_KEY = config("MAIL_GUN_DOMAIN_API")
+DEFAULT_FROM_EMAIL=config('MAIL_GUN_EMAIL')
+#SERVER_EMAIL = 'scottscarlett@gmail.com' 
+
+DOMAIN = config('FRONTEND_DOMAIN')
 
 
 DATABASES = {
@@ -194,7 +204,6 @@ MEDIA_URL = '/media/'
 
 
 
-
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=90),
@@ -232,6 +241,26 @@ SIMPLE_JWT = {
 STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY')
 STRIPE_PUBLIC_KEY = config('STRIPE_PUBLIC_KEY')
 STRIPE_WEBHOOK_SECRET_KEY = config('STRIPE_WEBHOOK_SECRET_KEY')
+
+
+
+### for password resets ####
+DJOSER = {
+    'USER_CREATE_PASSWORD_RETYPE': True,
+    'PASSWORD_CHANGED_EMAIL_CONFIRMATION': True,
+    'SEND_CONFIRMATION_EMAIL': True,
+    'SET_PASSWORD_RETYPE': True,
+    'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
+    'ACTIVATION_URL': 'activate/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': True,
+    'SERIALIZERS': {
+        'user_create': 'users.serializers.create_user_serializer',
+        'user': 'users.serializers.profile_serializer',
+        'current_user': 'users.serializers.profile_serializer',
+    }
+}
+
+
 
 
 ### FOR DEBUG TOOLBAR ###

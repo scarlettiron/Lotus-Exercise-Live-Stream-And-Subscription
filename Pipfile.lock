@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "19fa95a083141838ae8460b91df20e7113ee7473876426704f0c23aade1a8ad0"
+            "sha256": "921722e298b87bb9febf4c329ba636f7bfa01f3a2189dd60a13fbe36b08105c0"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -227,6 +227,14 @@
             "index": "pypi",
             "version": "==4.0.4"
         },
+        "django-anymail": {
+            "hashes": [
+                "sha256:49d83d7c16316ca86a624097496881d59b7d71b16bf1c5211cffa5b19ef98d0c",
+                "sha256:783342d49dd07d68778b81dd12a94c86e1d217463a68a85450a0513fabe31345"
+            ],
+            "index": "pypi",
+            "version": "==8.6"
+        },
         "django-cors-headers": {
             "hashes": [
                 "sha256:a22be2befd4069c4fc174f11cf067351df5c061a3a5f94a01650b4e928b0372b",
@@ -242,6 +250,14 @@
             ],
             "index": "pypi",
             "version": "==3.2.4"
+        },
+        "django-rest-passwordreset": {
+            "hashes": [
+                "sha256:6be5d34b334cae4e381336fa32987e48276eec976aa454bb0ef428438eba3d44",
+                "sha256:9762f337983b33f66b9ec95d4f19b3da8daba2b7d22ac005ba114ddda98aae38"
+            ],
+            "index": "pypi",
+            "version": "==1.2.1"
         },
         "django-storages": {
             "hashes": [
