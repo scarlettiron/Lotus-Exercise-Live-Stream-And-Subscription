@@ -34,6 +34,15 @@ class get_messages(MessagesMixin, generics.ListCreateAPIView):
     lookup_field = 'thread'
     serializer_class = message_serializer
     
+    def get_queryset(self):
+        thread = self.kwargs['thread']
+        try:
+            qs = message.objects.filter(thread = thread)
+        except:
+            qs = message.objects.none()
+        return qs
+    
+    
     
     def get(self, request, *args, **kwargs):
         thread_id = self.kwargs['thread']
