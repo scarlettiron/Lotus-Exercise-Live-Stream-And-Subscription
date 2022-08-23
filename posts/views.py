@@ -111,13 +111,22 @@ class post_search(generics.ListAPIView):
     def list(self, request, *args, **kwargs):
         modified_response = super().list(request, *args, **kwargs)
         user = self.request.user
+        
+        q = self.request.GET.get('q')
+        modified_response.data['q'] = q
+        
+        pks = []
+        if(modified_response.data['count'] > 0):
+            for x in modified_response.data['results']:
+                pks.append(x['id'])
+            
         try:
-            likes = post_like.objects.filter(user = user).values_list('pk', flat=True)
+            likes = post_like.objects.filter(user = user, pk__in = pks).values_list('pk', flat=True)
         except:
             likes = []
         
         try:
-            userPurchases = UserTransactionItem.objects.filter(user = user).values_list('post', flat=True)
+            userPurchases = UserTransactionItem.objects.filter(user = user, pk__in = pks).values_list('post', flat=True)
         except:
             userPurchases = []
             
@@ -289,16 +298,25 @@ class search_all_posts(generics.ListAPIView):
     def list(self, request, *args, **kwargs):
         modified_response = super().list(request, *args, **kwargs)
         user = self.request.user
+        
+        q = self.request.GET.get('q')
+        modified_response.data['q'] = q
+        
+        pks = []
+        if(modified_response.data['count'] > 0):
+            for x in modified_response.data['results']:
+                pks.append(x['id'])
+        
         try:
-            likes = post_like.objects.filter(user = user).values_list('pk', flat=True)
+            likes = post_like.objects.filter(user = user, pk__in = pks).values_list('pk', flat=True)
         except:
             likes = []
             
         try:
-            userPurchases = UserTransactionItem.objects.filter(user = user).values_list('post', flat=True)
+            userPurchases = UserTransactionItem.objects.filter(user = user, pk__in = pks).values_list('post', flat=True)
         except:
             userPurchases = []
-            
+        
         modified_response.data['likes'] = likes
         modified_response.data['purchases'] = userPurchases
         
