@@ -322,3 +322,4 @@ class search_all_posts(generics.ListAPIView):
         
         return modified_response    
         
+        
