@@ -93,3 +93,14 @@ class postProductId_serializer(serializers.ModelSerializer):
     class Meta:
         model = postProductId
         fields = '__all__'
+        
+
+class prefetchPost_serializer(serializers.ModelSerializer):
+    album = album_serializer()
+    user = prefetch_user_post_serializer()
+    class Meta:
+        model = post
+        fields = ['id', 'user', 'date','price','price_units','body', 
+                  'subscription', 'album']
+        read_only_fields = ['id','date']
+        
