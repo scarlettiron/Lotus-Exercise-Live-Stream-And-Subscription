@@ -1,0 +1,9 @@
+tagging feature
+
+ideas/todo
+
+add search option to find post with inputted tags
+
+then order the posts by most tags
+
+

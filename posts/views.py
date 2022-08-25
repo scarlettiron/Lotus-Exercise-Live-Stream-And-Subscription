@@ -213,12 +213,10 @@ class get_posts_exp(generics.ListAPIView, generics.GenericAPIView):
         body = request.data.get('body', None)
         price = request.data.get('price', 0)
         is_subscription = request.data.get('is_subscription', False)
-        user = self.request.user
         
         if fileList:
             Album = album.objects.create(user = request.user)
             for file in fileList:
-                print(file)
                 try:
                     Type = supportedTypes.objects.get(type=file.content_type)
                 except:
