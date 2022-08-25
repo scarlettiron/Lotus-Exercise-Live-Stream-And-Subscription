@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'verification.apps.VerificationConfig',
     'staffNotifications.apps.StaffnotificationsConfig',
     'userNotifications.apps.UsernotificationsConfig',
+    'tags',
 ]
 
 MIDDLEWARE = [
