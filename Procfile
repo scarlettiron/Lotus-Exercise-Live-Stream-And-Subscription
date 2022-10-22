@@ -1,0 +1,1 @@
+web: python manage.py migrate && gunicorn backend.asgi:application -w 4 -k uvicorn.workers.UvicornWorker

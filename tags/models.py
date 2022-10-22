@@ -7,5 +7,7 @@ class tag(models.Model):
 
 
 class tags(models.Model):
-    post = models.ForeignKey(post, on_delete=models.CASCADE)
+    post = models.ForeignKey(post, on_delete=models.CASCADE, related_name='posttag')
     tag = models.ForeignKey(tag, on_delete=models.CASCADE)
+
+
