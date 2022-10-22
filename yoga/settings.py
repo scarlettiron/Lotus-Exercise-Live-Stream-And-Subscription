@@ -29,7 +29,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "debug_toolbar",
     "anymail",
     'channels',
     'rest_framework',
@@ -113,7 +112,7 @@ DEFAULT_FROM_EMAIL=config('MAIL_GUN_EMAIL')
 DOMAIN = config('FRONTEND_DOMAIN')
 
 
-DATABASES = {
+''' DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'yoga2',
@@ -123,18 +122,14 @@ DATABASES = {
         'HOST':'localhost',
     }, 
 
-}
-'''         'new': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': config('DATABASE_NAME'),
-        'PASSWORD':config('DATABASE_PASSWORD'),
-        'PORT':5432,
-        'USER':'postgres',
-        'HOST':'localhost',
-    } '''
-#CONN_MAX_AGE=config('DB_CONNECTION_AGE')
+} '''
+
+DATABASE_URL = config('DATABASE_URL')
+DATABASES = {"default": dj_database_url.config(default=DATABASE_URL, conn_max_age=config('DB_CONNECTION_AGE'))}
+
+''' CONN_MAX_AGE=config('DB_CONNECTION_AGE')
 db_from_env = dj_database_url.config(conn_max_age=0)
-DATABASES['default'].update(db_from_env)
+DATABASES['default'].update(db_from_env) '''
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -196,13 +191,20 @@ AWS_S3_SECRET_ACCESS_KEY = config('AWS_S3_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
 AWS_S3_FILE_OVERWRITE = False
 AWS_S3_REGION_NAME = 'us-east-2'
+AWS_S3_CUSTOM_DOMIAN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
 
 #AWS_DEFAULT_ACL = 
 
-STATIC_URL = '/static/'
-
+# Static and media files (CSS, JavaScript, Images)
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMIAN}/static/'
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
 MEDIA_URL = '/media/'
 
+
+EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
+ANYMAIL_MAILGUN_API_KEY = config("MAIL_GUN_DOMAIN_API")
+DEFAULT_FROM_EMAIL=config('MAIL_GUN_EMAIL')
 
 
 SIMPLE_JWT = {
@@ -264,27 +266,3 @@ DJOSER = {
 
 
 
-### FOR DEBUG TOOLBAR ###
-INTERNAL_IPS = [
-    "127.0.0.1",
-]
-### END DUBUG TOOLBAR ###
-''' 
-LOGGING = {
-   'version': 1,
-   'disable_existing_loggers': False,
-   'handlers': {
-      'file': {
-         'level': 'DEBUG',
-         'class': 'logging.FileHandler',
-         'filename': '/tmp/debug.log',
-      },
-   },
-   'loggers': {
-      'django': {
-         'handlers': ['file'],
-         'level': 'DEBUG',
-         'propagate': True,
-      },
-   },
-} '''

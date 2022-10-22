@@ -4,7 +4,6 @@ from django.urls import path, include
 
 
 urlpatterns = [
-    path('__debug__/', include('debug_toolbar.urls')),
     path('admin/', admin.site.urls),
     #path(r'^api/password_reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
     path('auth/', include('djoser.urls')),
@@ -23,4 +22,5 @@ urlpatterns = [
     path('api/user-transactions/', include('userTransactions.urls')),
     path('api/verifications/', include('verification.urls')),
     path('api/usernotifications/', include('userNotifications.urls')),
+    path('api/tags/', include('tags.urls')),
 ]
