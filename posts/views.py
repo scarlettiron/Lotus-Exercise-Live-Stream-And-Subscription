@@ -144,6 +144,7 @@ class post_feed(generics.ListAPIView):
     serializer_class = post_detail_serializer
     
     def get_queryset(self, *args, **kwargs):
+        print('getting q set')
         user = self.request.user
         if user.is_authenticated:
             qs = super().get_queryset(*args, **kwargs)
@@ -153,6 +154,7 @@ class post_feed(generics.ListAPIView):
         return search_results
     
     def get(self, request, *args, **kwargs):
+        print('inside get')
         modified_response = super().list(request, *args, **kwargs)
         user = self.request.user
         try:

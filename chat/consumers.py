@@ -1,4 +1,4 @@
-import json
+''' import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from .models import thread
@@ -76,4 +76,4 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'sender':sender,
             'thread ':thread,
             'date':date
-        }))
+        })) '''

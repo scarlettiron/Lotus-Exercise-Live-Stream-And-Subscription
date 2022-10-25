@@ -1,14 +1,18 @@
 from rest_framework import generics
 from rest_framework.response import Response
 from classPackages.models import publicPackage
+from subscription.models import subscription
 from yoga.stripe_utils import stripeCustomer, buyPost, create_transaction_records, StripeUserSubscription, StripePostProduct, PuchaseLiveClass
 from django.http import JsonResponse
 import json
 
+from rest_framework.response import Response
 from subscription.serializers import subscription_serializer
 from users.models import custom_profile 
 from posts.models import post
 
+from django.conf import settings
+User = settings.AUTH_USER_MODEL
 
 class purchase_post(generics.GenericAPIView):
     
@@ -131,3 +135,31 @@ class purchase_class(generics.GenericAPIView):
             return Response(status=400)
         print("no purchase")
         return Response(status=400)
+    
+    
+class stripe_subscription_webhook(generics.GenericAPIView):
+    def post(self, request, *args, **kwargs):
+        data = self.request.data
+        if data['status'] == 'canceled':
+            try:
+                subObj = subscription.objects.filter(creator = data['metadata']['creator'], 
+                                               subscriber = data['metadata']['subscriber']).select_related(
+                                                   'creator', 'subscriber'
+                                               )
+            except:
+                return Response(status = 401)
+            
+            sub = StripeUserSubscription(creator = subObj.creator, subscriber = subObj.subscriber)
+            
+            try:
+                canceled = sub.cancelSubscriptionWebhook()
+                if canceled:
+                    return Response(status = 201)
+                else:
+                    return Response(status = 401)
+            except:
+                return Response(status = 401)
+            
+        return Response(status = 200)
+        
+        

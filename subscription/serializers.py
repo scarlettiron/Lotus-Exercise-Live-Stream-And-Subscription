@@ -11,7 +11,8 @@ class subscription_serializer(serializers.ModelSerializer):
     
     class Meta:
         model = subscription
-        fields = ['subscriber', 'creator', 'auto_draft', 'is_active']
+        fields = ['subscriber', 'creator', 'auto_draft', 'is_active', 'is_renewed',
+                  'start_date', 'end_date']
         
     def validate_subscriber(self, value):
         request = self.context.get('request')

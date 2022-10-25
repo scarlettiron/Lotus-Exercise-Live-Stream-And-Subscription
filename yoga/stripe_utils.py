@@ -1,3 +1,4 @@
+from sys import meta_path
 import stripe
 from django.conf import settings
 from datetime import datetime, timedelta
@@ -13,6 +14,8 @@ from siteTally.models import siteTransaction
 import pendulum
 from django.utils.dateparse import parse_datetime
 from dateutil.parser import *
+
+from yoga.settings import SITE_NAME
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -343,6 +346,11 @@ class StripeUserSubscription:
                 items = [{'price':self.localSubscriptionProduct.st_priceId}],
                 payment_behavior='default_incomplete',
                 expand=['latest_invoice.payment_intent'],
+                metadata={
+                    'creater':self.creator.pk,
+                    'subscriber':self.subscriber.pk,
+                    'site':SITE_NAME,
+                }
             )
             self.st_subscription = new_sub
             return self
@@ -388,7 +396,7 @@ class StripeUserSubscription:
                 print('unable to create local subscription object')
                 return False
 
-    def cancelSubscription(self):
+    def cancelSubscriptionSchedule(self):
         if not self.creator or not self.subscriber:
             raise Exception('creator and subscriber required')
         try:
@@ -406,13 +414,29 @@ class StripeUserSubscription:
             return False
         
         try:
-            sub.is_active = False
+            sub.is_renewed = False
             sub.save()
             return sub
         except:
             return False
         
-
+        
+    # for use with webwook when subscription cancelation has been received
+    def cancelSubscriptionWebhook(self):
+        if not self.creator or not self.subscriber:
+            raise Exception('creator and subscriber required')
+        try:
+            sub = subscription.objects.get(creator=self.creator, subscriber=self.subscriber)
+        except:
+            print('unable to find subscription')
+            return False
+        
+        try:
+            sub.is_active = False
+            sub.save()
+            return sub
+        except:
+            return False
 
 def buySubscriptionv2(customer, creator):
     try:

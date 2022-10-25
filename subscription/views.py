@@ -80,7 +80,7 @@ class cancel_subscription(generics.GenericAPIView):
         except:
             return Response('could not find creator', status=401)
         
-        sub = StripeUserSubscription(creator=creator, subscriber=request.user).cancelSubscription()
+        sub = StripeUserSubscription(creator=creator, subscriber=request.user).cancelSubscriptionSchedule()
         if sub:
             payload = subscription_serializer(sub).data
             return Response(payload, status=204)

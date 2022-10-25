@@ -1,5 +1,7 @@
 import os
-
+import django
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "yoga.settings")
+django.setup()
 from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 from django.core.asgi import get_asgi_application
@@ -10,11 +12,11 @@ from channels.security.websocket import AllowedHostsOriginValidator
 ## for socket sesions
 from channels.sessions import SessionMiddlewareStack
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "yoga.settings")
+get_django_application = get_asgi_application()
 
 application = ProtocolTypeRouter({
-  "http": get_asgi_application(),
-  "https": get_asgi_application(),
+  "http": get_django_application,
+  "https": get_django_application,
   
   "websocket": AllowedHostsOriginValidator(AuthMiddlewareStack(SessionMiddlewareStack(
         URLRouter(

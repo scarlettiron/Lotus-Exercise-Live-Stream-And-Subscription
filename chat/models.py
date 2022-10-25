@@ -1,12 +1,13 @@
 from django.db import models
 from django.db.models import signals
 from django.dispatch import receiver
-from django.conf import settings
-User = settings.AUTH_USER_MODEL
+''' from django.conf import settings
+User = settings.AUTH_USER_MODEL '''
+from users.models import custom_profile
 
 class thread(models.Model):
-    user1 = models.ForeignKey(User, related_name='+', on_delete=models.CASCADE)
-    user2 = models.ForeignKey(User, related_name='+', on_delete=models.CASCADE)
+    user1 = models.ForeignKey(custom_profile, related_name='+', on_delete=models.CASCADE)
+    user2 = models.ForeignKey(custom_profile, related_name='+', on_delete=models.CASCADE)
     last_viewed = models.DateTimeField(auto_now=True)
     has_unread = models.BooleanField(default=True)
     
@@ -23,7 +24,7 @@ class thread(models.Model):
 
 
 class message(models.Model):
-    sender = models.ForeignKey(User, on_delete=models.CASCADE)
+    sender = models.ForeignKey(custom_profile, on_delete=models.CASCADE)
     body = models.CharField(max_length=1000)
     date = models.DateTimeField(auto_now_add=True)
     thread = models.ForeignKey(thread, on_delete=models.CASCADE, related_name="messages")

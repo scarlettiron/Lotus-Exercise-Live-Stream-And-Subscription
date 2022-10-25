@@ -6,6 +6,7 @@ class subscription(models.Model):
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='subscribers')
     subscriber = models.ForeignKey(User, on_delete=models.CASCADE, related_name='subscriptions')
     is_active = models.BooleanField(default=True)
+    is_renewed = models.BooleanField(default=True)
     auto_draft = models.BooleanField(default=True)
     begin_date = models.DateTimeField()
     end_date = models.DateTimeField()

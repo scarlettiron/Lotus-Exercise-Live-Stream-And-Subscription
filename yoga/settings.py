@@ -1,16 +1,19 @@
 
 from pathlib import Path
 import os
+import sys
 from decouple import config
 import dj_database_url
 from storages.backends.s3boto3 import S3Boto3Storage
 from datetime import timedelta
+from django.core.management.utils import get_random_secret_key
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = config('SECRET_KEY')
+NEW_KEY = get_random_secret_key()
+SECRET_KEY = NEW_KEY
 
 DEBUG = config('DEBUG')
 
@@ -28,6 +31,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'storages',
     'django.contrib.staticfiles',
     "anymail",
     'channels',
@@ -68,8 +72,14 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_HEADERS = "*"
+CORS_ALLOW_CREDENTIALS=True
+
+CSRF_TRUSTED_ORIGINS = [config('API_URL'),]
 
 ROOT_URLCONF = 'yoga.urls'
+
+AUTH_USER_MODEL = 'users.custom_profile'
 
 TEMPLATES = [
     {
@@ -90,29 +100,32 @@ TEMPLATES = [
 #WSGI_APPLICATION = 'yoga.wsgi.application'
 
 ASGI_APPLICATION = 'yoga.asgi.application'
-ASGI_THREADS = config('ASGI_THREADS')
+#ASGI_THREADS = config('ASGI_THREADS')
 
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
             "hosts": [('127.0.0.1', 6379)],
+            #for deployment
+            #"hosts":[config('REDIS_URL'),],
             "symmetric_encryption_keys":[SECRET_KEY],
         },
     },
 }
-
+''' red = os.environ.get('REDIS_URL')
+print(f"REDIS URL: {red}")
+sys.stdout.flush() '''
 
 ### send emails through mail gun
 EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
 ANYMAIL_MAILGUN_API_KEY = config("MAIL_GUN_DOMAIN_API")
 DEFAULT_FROM_EMAIL=config('MAIL_GUN_EMAIL')
-#SERVER_EMAIL = 'scottscarlett@gmail.com' 
 
 DOMAIN = config('FRONTEND_DOMAIN')
 
 
-''' DATABASES = {
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'yoga2',
@@ -122,10 +135,10 @@ DOMAIN = config('FRONTEND_DOMAIN')
         'HOST':'localhost',
     }, 
 
-} '''
+}  
 
-DATABASE_URL = config('DATABASE_URL')
-DATABASES = {"default": dj_database_url.config(default=DATABASE_URL, conn_max_age=config('DB_CONNECTION_AGE'))}
+#DATABASE_URL = config('DATABASE_URL')
+#DATABASES = {"default": dj_database_url.config(default=DATABASE_URL, conn_max_age=int(config('DB_CONNECTION_AGE')))}
 
 ''' CONN_MAX_AGE=config('DB_CONNECTION_AGE')
 db_from_env = dj_database_url.config(conn_max_age=0)
@@ -149,7 +162,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-AUTH_USER_MODEL = 'users.custom_profile'
+
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -196,9 +209,10 @@ AWS_S3_CUSTOM_DOMIAN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
 #AWS_DEFAULT_ACL = 
 
 # Static and media files (CSS, JavaScript, Images)
+#STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMIAN}/static/'
-STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
+#STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMIAN}/static/'
+STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
 
