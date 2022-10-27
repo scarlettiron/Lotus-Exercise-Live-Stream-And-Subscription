@@ -4,6 +4,7 @@ from userTransactions.models import UserTransactionItem
 
 from content.serializers import album_serializer
 from users.serializers import prefetch_user_post_serializer
+from comments.serializers import get_comment_serializer
 
 class post_list_serializer(serializers.ModelSerializer):
     class Meta:
@@ -26,6 +27,7 @@ class post_detail_serializer(serializers.ModelSerializer):
     user = prefetch_user_post_serializer()
     is_owner = serializers.SerializerMethodField()
     has_paid = serializers.SerializerMethodField()
+    #comments = get_comment_serializer(many=True)
 
     class Meta:
         model = post

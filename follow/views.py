@@ -43,19 +43,16 @@ class following_users(Follow_Mixin, generics.ListCreateAPIView):
 
 class delete_follow(Follow_Mixin, generics.GenericAPIView, mixins.DestroyModelMixin):
     lookup_field = 'creator_id'
-    ## rewrite this
+
     def get_queryset(self, *args, **kwargs):
         creator = self.kwargs['creator_id']
         user = self.request.user
         try:
             Follow = follow.objects.get(creator__pk = creator, follower__pk = user.pk)
-            print(Follow)
             return Follow
         except:
             return follow.objects.none()
         
     def destroy(self, instance, *args, **kwargs):
-        print('inside follow destroy')
-        print(instance)
         self.perform_destroy(instance)
         

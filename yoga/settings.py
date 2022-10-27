@@ -13,7 +13,7 @@ from django.core.management.utils import get_random_secret_key
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 NEW_KEY = get_random_secret_key()
-SECRET_KEY = NEW_KEY
+SECRET_KEY = '47t5812959'
 
 DEBUG = config('DEBUG')
 
@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.postgres',
     'storages',
     'django.contrib.staticfiles',
     "anymail",

@@ -1,12 +1,14 @@
 from rest_framework import generics, response
-from .models import tag, tags
+from .models import tag
 from .serializers import post_serializer
 
 from posts.models import post
 
 from django.db.models import OuterRef, Subquery, Q, Count
 
-class searchByTags(generics.GenericAPIView):
+
+## not in use ###
+''' class searchByTags(generics.GenericAPIView):
     serializer_class = post_serializer
     
     def get(self, request, *args, **kwargs):
@@ -19,4 +21,4 @@ class searchByTags(generics.GenericAPIView):
         subquery = len(tags.objects.filter(post = OuterRef('pk'), tag__body__in = search_list).only('pk').values_list('pk'))
         qs = post.objects.annotate(num_of_tags = Subquery(subquery))
         serializer = post_serializer(qs, many=True)
-        return response.Response(serializer.data, status=200)
+        return response.Response(serializer.data, status=200) '''

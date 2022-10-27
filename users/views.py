@@ -5,6 +5,9 @@ from rest_framework import generics,  mixins, parsers, response
 
 ###Additional django imports ###
 from django.shortcuts import get_object_or_404
+from django.contrib.postgres.search import SearchQuery, SearchVector, SearchRank, TrigramSimilarity
+from django.db.models import Q
+
 
 from yoga.stripe_utils import StripeUserSubscription
 
@@ -13,7 +16,6 @@ from .models import custom_profile
 from .serializers import profile_serializer, create_user_serializer, ResetPasswordEmailRequestSerializer
 from .mixins import IsCreatorOrReadOnly_Mixin
 
-from subscription.models import subscription_product
 
 
 
@@ -86,6 +88,34 @@ class create_user(generics.CreateAPIView):
 
 
 
+class SearchUsersComplex(generics.ListAPIView):
+    serializer_class = profile_serializer
+    
+    def get_queryset(self):
+        
+        q = self.request.GET.get('q', None)
+        if not q:
+            return custom_profile.objects.none()
+        
+        query_list = q.split(" ")
+        complex_query = SearchQuery(query_list[0])
+        trigams = TrigramSimilarity('username', str(query_list[0]))
+        if len(query_list) > 1:
+            for x in query_list[1:]:
+                complex_query |= SearchQuery(x)
+                trigams |= TrigramSimilarity(x)
+        
+        vector = SearchVector('tags__body', weight="C") + SearchVector('username', weight="A") 
+        search_rank = SearchRank(vector, complex_query)
+        
+        users = custom_profile.objects.annotate(similarity = trigams,
+            rank = search_rank).filter(Q(rank__gte=.05)| Q(similarity__gte = .2),
+                                        is_active = True, is_verified = True, 
+                                       is_instructor = True).distinct().order_by("-similarity", "-rank")
+        
+        return users
+
+
 ### search through all users ###
 class SearchUsers(generics.ListAPIView):
     queryset = custom_profile.search.all()
@@ -107,7 +137,6 @@ class update_subscription_price(IsCreatorOrReadOnly_Mixin ,generics.GenericAPIVi
         price = int(request.data.get('price', None))
         print(price)
         if type(price) is int and price > 50:
-            print('trying to update')
             user = custom_profile.objects.get(pk = user)
             user.subscription_units = price
             user.save()
@@ -121,29 +150,3 @@ class update_subscription_price(IsCreatorOrReadOnly_Mixin ,generics.GenericAPIVi
 
 
 
-''' ### password reset endpoints ####
-class RequestPasswordResetEmail(generics.GenericAPIView):
-    serializer_class = ResetPasswordEmailRequestSerializer
-
-    def post(self, request):
-        serializer = self.serializer_class(data=request.data)
-
-        email = request.data.get('email', '')
-
-        if User.objects.filter(email=email).exists():
-            user = User.objects.get(email=email)
-            uidb64 = urlsafe_base64_encode(smart_bytes(user.id))
-            token = PasswordResetTokenGenerator().make_token(user)
-            current_site = get_current_site(
-                request=request).domain
-            relativeLink = reverse(
-                'password-reset-confirm', kwargs={'uidb64': uidb64, 'token': token})
-
-            redirect_url = request.data.get('redirect_url', '')
-            absurl = 'http://'+current_site + relativeLink
-            email_body = 'Hello, \n Use link below to reset your password  \n' + \
-                absurl+"?redirect_url="+redirect_url
-            data = {'email_body': email_body, 'to_email': user.email,
-                    'email_subject': 'Reset your passsword'}
-            Util.send_email(data)
-        return Response({'success': 'We have sent you a link to reset your password'}, status=status.HTTP_200_OK) '''

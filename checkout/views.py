@@ -140,6 +140,10 @@ class purchase_class(generics.GenericAPIView):
 class stripe_subscription_webhook(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         data = self.request.data
+        print(data)
+        if data['object'] != 'subscription':
+            return Response(status = 403)
+        
         if data['status'] == 'canceled':
             try:
                 subObj = subscription.objects.filter(creator = data['metadata']['creator'], 
@@ -159,6 +163,9 @@ class stripe_subscription_webhook(generics.GenericAPIView):
                     return Response(status = 401)
             except:
                 return Response(status = 401)
+            
+        if data['status'] == 'payment':
+            pass
             
         return Response(status = 200)
         

@@ -1,7 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, UserManager
-from django.db.models import Q
+from django.db.models import Q, Prefetch
 from django.utils.text import slugify
+from tags.models import tag
+from django.contrib.postgres.search import SearchQuery, SearchVector, SearchRank
 
 from django.conf import settings
 User = settings.AUTH_USER_MODEL
@@ -28,6 +30,27 @@ class profile_queryset(models.QuerySet):
         lookup = Q(username__icontains = query) | Q(bio__icontains = query)
         return self.is_active().is_verified().is_instructor().filter(lookup).order_by('-last_login')
     
+    def search_instructors_complex(self, query_list, user=None):
+        print(query_list)
+        complex_query = SearchQuery(query_list[0])
+        if len(query_list) > 0:
+            for x in query_list[1:]:
+                complex_query |= SearchQuery(x)
+        
+        Vector = SearchVector('username', weight = 'A') + SearchVector('tags__body', weight = 'B') + SearchVector('bio', weight = 'C')
+
+        
+        Rank = SearchRank(Vector, complex_query)
+        
+        users =  self.is_active().is_verified().is_instructor().annotate(
+            rank = Rank
+        ).filter(
+            rank__gte = 0.03
+        ).distinct().order_by('-rank')
+        print(users[0].rank)
+        
+        
+    
     def search_customers(self, query, user=None):
         lookup = Q(username__icontains = query) | Q(bio__icontains = query)
         return self.is_active().filter(lookup)
@@ -36,6 +59,9 @@ class profile_queryset(models.QuerySet):
 class profile_manager(UserManager):
     def get_queryset(self, *args, **kwargs):
         return profile_queryset(self.model, using=self._db, hints = self._hints)
+    
+    def search_instructors_complex(self, user=None, query_list = None):
+        return self.get_queryset().search_instructors_complex(query_list, user=user)
     
     def search_instructors(self, query, user=None):
         return self.get_queryset().search_instructors(query, user=user)
@@ -52,7 +78,7 @@ class custom_profile(AbstractUser):
     is_verified = models.BooleanField(default=False)
     subscription_units = models.IntegerField(default = 0)
     balance = models.OneToOneField(creator_balance, on_delete=models.SET_NULL, null = True)
-
+    tags = models.ManyToManyField(tag, blank=True)
     
     @property 
     def slug(self):

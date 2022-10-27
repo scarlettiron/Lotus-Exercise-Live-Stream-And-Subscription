@@ -258,7 +258,7 @@ class StripeUserSubscription:
                 
     def findCreateSubProductId(self):
         try:
-            productObj = subscription_product.objects.get(user=self.creator)
+            productObj = subscription_product.objects.filter(user=self.creator).select_related('creator', 'subscriber')[0]
             self.localSubscriptionProduct = productObj
             return self
         
@@ -357,6 +357,50 @@ class StripeUserSubscription:
         except Exception as e:
             print(e)
             return False
+        
+    def create_transaction_records(stripe_subscription, self):
+        if not stripe_subscription or not self.creator or not self.subscriber:
+            raise Exception('need payment intent id, user obj and post obj')
+
+        CustomerId = stripeCustomer(self.subscriber).findCreateCustomerId()
+        invoice = stripe_subscription['latest_invoice']
+
+        if invoice['status'] == 'succeeded': 
+            try:
+                price = int(invoice['amount'])
+                UserTransactionItem.objects.create(
+                    user = self.subscriber,
+                    units = price,
+                    is_payment = False,
+                    is_purchase = True,
+                    is_refund = False,
+                    subscription = invoice['metadata']['subscription']
+                )
+            
+                #create record for creator
+                UserTransactionItem.objects.create(
+                    user = self.creator,
+                    units = price,
+                    is_payment = True,
+                    is_purchase = False,
+                    is_refund = False,
+                    subscription = invoice['metadata']['subscription']
+                )
+            except:
+                return False
+            
+            try:
+                siteTransaction.objects.create(
+                    st_transaction_id = invoice['id'],
+                    customerId = CustomerId.stripeCustomer,
+                    units = price,
+                    is_payment = True,
+                    is_refund = False,
+                    subscription = invoice['metadata']['subscription']
+                )
+                return True
+            except:
+                return False
 
     def finalizeBuySubscription(self):
         if not self.stSubscriptionId or not self.stIntentId:
@@ -426,7 +470,7 @@ class StripeUserSubscription:
         if not self.creator or not self.subscriber:
             raise Exception('creator and subscriber required')
         try:
-            sub = subscription.objects.get(creator=self.creator, subscriber=self.subscriber)
+            sub = subscription.objects(creator=self.creator, subscriber=self.subscriber)
         except:
             print('unable to find subscription')
             return False

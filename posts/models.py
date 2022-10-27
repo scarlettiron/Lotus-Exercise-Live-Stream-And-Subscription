@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, Prefetch
 from content.models import album
 
 from subscription.models import subscription
@@ -16,7 +16,9 @@ User = settings.AUTH_USER_MODEL
 class post_querysets(models.QuerySet):
     def search_all_content(self, query):
         lookup = Q(body__icontains = query, subscription = False)
-        return self.filter(lookup).order_by('-date')
+        return self.filter(lookup).order_by('-date').select_related(
+            'user'
+        )
         
     def search_users_posts(self, query, user):
         lookup = Q(body__icontains = query, user=user)

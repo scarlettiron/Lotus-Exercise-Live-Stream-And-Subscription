@@ -12,7 +12,6 @@ class publicPackage_list(generics.ListCreateAPIView,
     
     def get_queryset(self, *args, **kwargs):
         username = self.kwargs['username']
-        print(username)
         qs = publicPackage.objects.filter(user__username = username)
         return qs
     
@@ -38,8 +37,3 @@ class publicPackage_detail(isPackageOwnerOrReadOnly_mixin, generics.RetrieveUpda
         super().perform_destroy(instance)
         
         
-
-class exp(generics.GenericAPIView):
-    def get(self, request, *args, **kwargs):
-        qs = appointment.objects.get(pk=1).select_related('packageSessionId', 'packageSessionId__classPackage')
-        print(qs)

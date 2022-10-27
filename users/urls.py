@@ -9,6 +9,7 @@ urlpatterns = [
     path('detail/<str:username>/', v.user_detail.as_view(), name="user-detail"),
     path('list/', v.user_list.as_view(), name="user-list"),
     path('create/', v.create_user.as_view(), name='user-create'),
+    path('search-complex/', v.SearchUsersComplex.as_view(), name="search-complex"),
     path('search/', v.SearchUsers.as_view(), name='active-user-search'),
     path('subscription-price-update/<int:pk>/', v.update_subscription_price.as_view(), name='updateSubscriptionPrice'),
 ]
