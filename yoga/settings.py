@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'django.contrib.postgres',
     'storages',
     'django.contrib.staticfiles',
+    "debug_toolbar",
     "anymail",
     'channels',
     'rest_framework',
@@ -70,6 +71,12 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "debug_toolbar.middleware.DebugToolbarMiddleware",
+]
+
+INTERNAL_IPS = [
+    # ...
+    "127.0.0.1",
+    # ...
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
