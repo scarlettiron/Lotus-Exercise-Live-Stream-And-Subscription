@@ -10,6 +10,7 @@ from comments.serializers import get_comment_serializer
 class post_list_serializer(serializers.ModelSerializer):
     liked = serializers.IntegerField()
     purchased = serializers.IntegerField()
+    user = prefetch_user_post_serializer()
     class Meta:
         model = post
         fields = ['id', 'body','user','price_units','price', 

@@ -56,7 +56,7 @@ class post_querysets(models.QuerySet):
         lookup = Q(user__id__in=following, subscription=False) | Q(user__id__in=subscribed)
         posts = self.filter(lookup).annotate( liked = Count('post_like', filter = Q(post_like__user__pk = user.pk)),
                                             purchased = Count('usertransactionitem', filter = Q(usertransactionitem__user__pk = user.pk))
-                                            ).distinct().order_by('-date')
+                                            ).distinct().select_related('user', 'album').order_by('-date')
         return posts
 
 
