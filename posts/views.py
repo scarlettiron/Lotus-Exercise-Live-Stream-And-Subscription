@@ -2,7 +2,6 @@
 from rest_framework import generics, permissions, parsers
 from rest_framework.response import Response
 from django.db.models import Prefetch, Count, Q, Value
-from django.contrib.postgres.search import SearchQuery
 
 ### local imports ###
 from .models import post
@@ -11,10 +10,7 @@ from .mixins import IsOwnerOrReadOnly_Mixin
 
 ### imports from other apps in projects ###
 from content.models import album, media, supportedMediaContentTypes as supportedTypes
-from likeUnlike.models import post_like
-from comments.serializers import get_comment_serializer
 from comments.models import comment
-from userTransactions.models import UserTransactionItem
 
 
 #Orders search results based by highest ranking score then trigram similarity
@@ -68,16 +64,8 @@ class post_feed(generics.ListAPIView):
         return search_results
     
 
-
-#!!!!!   DEV'S   !!!#
-# I understand that using prefetch to search through post likes and purchases
-#so that they are added to each individual post is a better solution for larger
-#data sets. However I have a smaller dataset and am attempting to save on db 
-#queries for this particular endpoint.
-
-### Used for getting all of particular users's posts #
-### final draft    
-class get_posts_exp(generics.ListAPIView, generics.GenericAPIView):
+### Used for getting all of particular users's posts #   
+class get_posts_profile(IsOwnerOrReadOnly_Mixin, generics.ListAPIView, generics.GenericAPIView):
     serializer_class = profile_post_serializer
     permissions_classes = [permissions.IsAuthenticated]
     parser_classes = [parsers.MultiPartParser, parsers.FormParser, parsers.FileUploadParser]
@@ -88,32 +76,13 @@ class get_posts_exp(generics.ListAPIView, generics.GenericAPIView):
         user = self.kwargs['user']
         try:
             qs = post.objects.filter(user__username=user).annotate(
-                liked = Count('post_like', filter = Q(post_like__user__pk = user)),
-                purchased = Count('usertransactionitem', filter = Q(usertransactionitem__user__pk = user))
+                liked = Count('post_like', filter = Q(post_like__user__username = user)),
+                purchased = Count('usertransactionitem', filter = Q(usertransactionitem__user__username = user))
                 ).select_related('user').order_by('-date')
         except:
-            qs = post.objects.none()
+            qs = post.objects.none() 
         return qs
     
-    def get(self, request, *args, **kwargs):
-        modified_response = self.list(request, *args, **kwargs)
-        creator = self.kwargs['user']
-        user = self.request.user
-        
-        #check to see if any user likes creators post
-        try:
-            likes = post_like.objects.filter(user = user, post__user__username = creator).values_list('post', flat=True)
-        except:
-            likes = []
-        #check to see if user has purchased any of creators posts
-        try:
-            userPurchases = UserTransactionItem.objects.filter(user = user, post__user__username = creator).values_list('post', flat=True)
-        except:
-            userPurchases = []
-            
-        modified_response.data['likes'] = likes
-        modified_response.data['purchases'] = userPurchases
-        return modified_response
     
     
     def post(self, request, *args, **kwargs):
@@ -148,7 +117,7 @@ class get_posts_exp(generics.ListAPIView, generics.GenericAPIView):
     
 
     
-class post_detail_update_delete(generics.RetrieveUpdateDestroyAPIView):
+class post_detail_update_delete(IsOwnerOrReadOnly_Mixin, generics.RetrieveUpdateDestroyAPIView):
     serializer_class = post_detail_serializer
 
     def get_queryset(self):
@@ -177,6 +146,10 @@ class post_detail_update_delete(generics.RetrieveUpdateDestroyAPIView):
         return qs
     
     
+    def put(self, request, *args, **kwargs):
+        return super().partial_update(request, *args, **kwargs)
+    
+    
     ''' def retrieve(self, request, *args, **kwargs):
         pk = self.kwargs['pk']
         modified_response =  super().retrieve(request, *args, **kwargs)  
@@ -191,8 +164,6 @@ class post_detail_update_delete(generics.RetrieveUpdateDestroyAPIView):
         modified_response.data['comments'] = serializer
         return modified_response '''
         
-    def put(self, request, *args, **kwargs):
-        return super().partial_update(request, *args, **kwargs)
         
         
         
