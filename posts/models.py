@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Q, Prefetch, OuterRef, Count, Value
+from django.db.models import Q, Count, Value
 from django.contrib.postgres.search import SearchQuery, SearchVector, SearchRank, TrigramSimilarity
 from content.models import album
 

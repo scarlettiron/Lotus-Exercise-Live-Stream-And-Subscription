@@ -34,13 +34,14 @@ class post_detail_serializer(serializers.ModelSerializer):
     is_owner = serializers.SerializerMethodField()
     liked = serializers.IntegerField()
     purchased = serializers.IntegerField()
+    comments = get_comment_serializer(many=True)
 
     class Meta:
         model = post
         fields = ['id', 'user', 'date','price','price_units','body', 
                   'subscription', 'album', 'is_owner',
-                  'liked', 'purchased']
-        read_only_fields = ['id','date', 'is_owner', 'liked', 'purchased']
+                  'liked', 'purchased', 'comments']
+        read_only_fields = ['id','date', 'is_owner', 'liked', 'purchased', 'comments']
         
 
     def get_is_owner(self, obj):

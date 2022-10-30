@@ -140,7 +140,7 @@ class post_detail_update_delete(IsOwnerOrReadOnly_Mixin, generics.RetrieveUpdate
                 'user', 'album'
             ).prefetch_related(
                 Prefetch('comment_set', 
-                        queryset = comment.objects.filter(post__pk = pk).select_related('user').order_by('-date'), to_attr='commented'),
+                        queryset = comment.objects.filter(post__pk = pk).select_related('user').order_by('-date'), to_attr='comments'),
                 )
             
         return qs
