@@ -1,7 +1,7 @@
 ###rest framework imports ###
 from rest_framework import generics, permissions, parsers
 from rest_framework.response import Response
-from django.db.models import Prefetch, Count, Q, Value
+from django.db.models import Prefetch, Case, When,Count, Q, Value
 
 ### local imports ###
 from .models import post
@@ -71,13 +71,12 @@ class get_posts_profile(IsOwnerOrReadOnly_Mixin, generics.ListAPIView, generics.
     parser_classes = [parsers.MultiPartParser, parsers.FormParser, parsers.FileUploadParser]
     lookup_field = 'user'
     
-    ## add prefecth related data in here ###
     def get_queryset(self, *args, **kwargs):
         user = self.kwargs['user']
         try:
             qs = post.objects.filter(user__username=user).annotate(
-                liked = Count('post_like', filter = Q(post_like__user__username = user)),
-                purchased = Count('usertransactionitem', filter = Q(usertransactionitem__user__username = user))
+                liked = Count('post_like', filter = Q(post_like__user__username = self.request.user.username))).annotate(
+                purchased = Count('usertransactionitem', filter = Q(usertransactionitem__user__username = self.request.user.username))
                 ).select_related('user').order_by('-date')
         except:
             qs = post.objects.none() 
