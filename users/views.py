@@ -109,7 +109,7 @@ class SearchUsersComplex(generics.ListAPIView):
         search_rank = SearchRank(vector, complex_query)
         
         users = custom_profile.objects.annotate(similarity = trigams,
-            rank = search_rank).filter(Q(rank__gte=.05)| Q(similarity__gte = .2),
+            rank = search_rank).filter(Q(rank__gte=.05)| Q(similarity__gte = .01),
                                         is_active = True, is_verified = True, 
                                        is_instructor = True).distinct().order_by("-similarity", "-rank")
         

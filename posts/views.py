@@ -1,7 +1,8 @@
 ###rest framework imports ###
 from rest_framework import generics, permissions, parsers
 from rest_framework.response import Response
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Count, Q, Value
+from django.contrib.postgres.search import SearchQuery
 
 ### local imports ###
 from .models import post
@@ -16,6 +17,31 @@ from comments.models import comment
 from userTransactions.models import UserTransactionItem
 
 
+#Orders search results based by highest ranking score then trigram similarity
+#if no results is found using the complex queries and vectors or trigrams, returns
+#results using __icontains
+class search_all_posts_complex(generics.ListAPIView):
+    model = post
+    queryset = post.search.filter()
+    serializer_class = post_list_serializer
+    
+    def get_queryset(self, *args, **kwargs):
+        q = self.request.GET.get('q', None)
+        if not q:
+            return Response(status = 404)
+        
+        q_list = q.split(" ")
+
+        qs = super().get_queryset(*args, **kwargs)
+        if self.request.user.is_authenticated:
+            posts = qs.search_all_content_complex(q_list, user = self.request.user.pk)
+        else:
+            posts = qs.search_all_content_complex(q_list)
+        return posts
+
+
+
+
 # Return all posts in database #
 class post_list(generics.ListAPIView):
     queryset = post.objects.all().order_by('-date')
@@ -24,73 +50,13 @@ class post_list(generics.ListAPIView):
     
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
+
     
-
-
-
-#!!!!!   DEV'S   !!!#
-# I understand that using prefetch to search through post likes and purchases
-#so that they are added to each individual post is a better solution for larger
-#data sets. However I have a smaller dataset and am attempting to save on db 
-#queries 
-
-# search through all posts or through specific users posts for key words #   
-class post_search(generics.ListAPIView):
-    serializer_class = post_detail_serializer
-    queryset = post.objects.all()
-    
-    def get_queryset(self, *args, **kwargs):
-        qs = super().get_queryset(*args, **kwargs)
-        q = self.request.GET.get('q')
-        user = self.request.GET.get('username')
-
-        if user and q:
-            search_results = qs.search_users_posts(q, user)
-            return search_results 
-        elif not user and q:
-            search_results = qs.search_all_content(q)
-            return search_results 
-        return post.objects.none()
-    
-    def list(self, request, *args, **kwargs):
-        modified_response = super().list(request, *args, **kwargs)
-        user = self.request.user
-        
-        q = self.request.GET.get('q')
-        modified_response.data['q'] = q
-        
-        pks = []
-        if(modified_response.data['count'] > 0):
-            for x in modified_response.data['results']:
-                pks.append(x['id'])
-            
-        try:
-            likes = post_like.objects.filter(user = user, pk__in = pks).values_list('pk', flat=True)
-        except:
-            likes = []
-        
-        try:
-            userPurchases = UserTransactionItem.objects.filter(user = user, pk__in = pks).values_list('post', flat=True)
-        except:
-            userPurchases = []
-            
-        modified_response.data['likes'] = likes
-        modified_response.data['purchases'] = userPurchases
-        
-        return modified_response
-    
-
-
-#!!!!!   DEV'S   !!!#
-# I understand that using prefetch to search through post likes and purchases
-#so that they are added to each individual post is a better solution for larger
-#data sets. However I have a smaller dataset and am attempting to save on db 
-#queries 
 
 ### User feed showing posts from creators user is following and subscribed to ###    
 class post_feed(generics.ListAPIView):
     queryset = post.search.all()
-    serializer_class = post_detail_serializer
+    serializer_class = post_list_serializer
     
     def get_queryset(self, *args, **kwargs):
         user = self.request.user
@@ -101,29 +67,15 @@ class post_feed(generics.ListAPIView):
             search_results = post.objects.all().select_related('user').order_by('-date')
         return search_results
     
-    def get(self, request, *args, **kwargs):
-        modified_response = super().list(request, *args, **kwargs)
-        user = self.request.user
-        try:
-            likes = post_like.objects.filter(user = user).values_list('id', flat=True)
-        except:
-            likes = []
-        try:
-            userPurchases = UserTransactionItem.objects.filter(user = user).values_list('post', flat=True)
-        except:
-            userPurchases = []
-         
-        modified_response.data['likes'] = likes
-        modified_response.data['purchases'] = userPurchases
-        return modified_response
-    
+
 
 #!!!!!   DEV'S   !!!#
 # I understand that using prefetch to search through post likes and purchases
 #so that they are added to each individual post is a better solution for larger
 #data sets. However I have a smaller dataset and am attempting to save on db 
-#queries 
+#queries for this particular endpoint.
 
+### Used for getting all of particular users's posts #
 ### final draft    
 class get_posts_exp(generics.ListAPIView, generics.GenericAPIView):
     serializer_class = profile_post_serializer
@@ -135,7 +87,10 @@ class get_posts_exp(generics.ListAPIView, generics.GenericAPIView):
     def get_queryset(self, *args, **kwargs):
         user = self.kwargs['user']
         try:
-            qs = post.objects.filter(user__username=user).select_related('user').order_by('-date')
+            qs = post.objects.filter(user__username=user).annotate(
+                liked = Count('post_like', filter = Q(post_like__user__pk = user)),
+                purchased = Count('usertransactionitem', filter = Q(usertransactionitem__user__pk = user))
+                ).select_related('user').order_by('-date')
         except:
             qs = post.objects.none()
         return qs
@@ -191,45 +146,50 @@ class get_posts_exp(generics.ListAPIView, generics.GenericAPIView):
         return Response(serializer.data, status=201)
 
     
- 
-#!!!!!   DEV'S   !!!#
-# I understand that using prefetch to search through post likes and purchases
-#so that they are added to each individual post is a better solution for larger
-#data sets. However I have a smaller dataset and am attempting to save on db 
-#queries 
+
     
-class post_detail_update_delete( IsOwnerOrReadOnly_Mixin,generics.RetrieveUpdateDestroyAPIView):
+class post_detail_update_delete(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = post_detail_serializer
 
     def get_queryset(self):
         pk = self.kwargs['pk']
-        qs = post.objects.filter(pk=pk).select_related(
-            'user', 'album'
+
+        if self.request.user.is_authenticated:
+            qs = post.objects.filter(pk=pk).annotate(
+                liked = Count('post_like', filter=Q(post_like__user = self.request.user)),
+                purchased = Count('usertransactionitem', filter = Q(usertransactionitem__user = self.request.user))
+                ).select_related(
+                'user', 'album'
+                ).prefetch_related(
+                Prefetch('comment_set', 
+                        queryset = comment.objects.filter(post__pk = pk).select_related('user').order_by('-date'), to_attr='comments'),
+                )
+                
+        else:
+
+            qs = post.objects.filter(pk=pk).annotate(liked = Value(0), purchased = Value(0)).select_related(
+                'user', 'album'
             ).prefetch_related(
-            Prefetch('comment_set', 
-                     queryset = comment.objects.filter(post__pk = pk).select_related('user').order_by('-date'), to_attr='comments'),
-            )
+                Prefetch('comment_set', 
+                        queryset = comment.objects.filter(post__pk = pk).select_related('user').order_by('-date'), to_attr='commented'),
+                )
+            
         return qs
     
-    def retrieve(self, request, *args, **kwargs):
+    
+    ''' def retrieve(self, request, *args, **kwargs):
         pk = self.kwargs['pk']
         modified_response =  super().retrieve(request, *args, **kwargs)  
-        
-        # get if user has liked the post
-        try:
-            likes = post_like.objects.filter(user = self.request.user, post__pk = pk).values_list('pk', flat=True)
+        #get all comments on post
+        try:     
+            comments = comment.objects.filter(post__pk = pk).select_related('user').order_by('-date')
+            serializer = get_comment_serializer(comments, many=True).data
         except:
-            likes = []
+            serializer = []
             
-        #check to see if user purchased post
-        try:
-            userPurchases = UserTransactionItem.objects.filter(post__pk = pk).values_list('post', flat=True)
-        except:
-            userPurchases = []
-
-        modified_response.data['likes'] = likes
-        modified_response.data['purchases'] = userPurchases
-        return modified_response
+        
+        modified_response.data['comments'] = serializer
+        return modified_response '''
         
     def put(self, request, *args, **kwargs):
         return super().partial_update(request, *args, **kwargs)
@@ -237,47 +197,4 @@ class post_detail_update_delete( IsOwnerOrReadOnly_Mixin,generics.RetrieveUpdate
         
         
 
-#!!!!!   DEV'S   !!!#
-# I understand that using prefetch to search through post likes and purchases
-#so that they are added to each individual post is a better solution for larger
-#data sets. However I have a smaller dataset and am attempting to save on db 
-#queries 
-## search through all posts on a site that are not included in subscription
-class search_all_posts(generics.ListAPIView):
-    queryset = post.search.filter()
-    
-    def get_queryset(self, request, *args, **kwargs):
-        qs = super().get_queryset(*args, **kwargs)
-        q = self.request.GET.get('q')
-        results = qs.search_all_content(q)
-        return results
-    
-    
-    def list(self, request, *args, **kwargs):
-        modified_response = super().list(request, *args, **kwargs)
-        user = self.request.user
-        
-        q = self.request.GET.get('q')
-        modified_response.data['q'] = q
-        
-        pks = []
-        if(modified_response.data['count'] > 0):
-            for x in modified_response.data['results']:
-                pks.append(x['id'])
-        
-        try:
-            likes = post_like.objects.filter(user = user, pk__in = pks).values_list('pk', flat=True)
-        except:
-            likes = []
-            
-        try:
-            userPurchases = UserTransactionItem.objects.filter(user = user, pk__in = pks).values_list('post', flat=True)
-        except:
-            userPurchases = []
-        
-        modified_response.data['likes'] = likes
-        modified_response.data['purchases'] = userPurchases
-        
-        return modified_response    
-        
         
