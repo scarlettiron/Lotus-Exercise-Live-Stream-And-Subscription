@@ -1,4 +1,6 @@
 ###rest framework imports ###
+from xmlrpc.client import boolean
+from django.forms import BooleanField
 from rest_framework import generics, permissions, parsers
 from rest_framework.response import Response
 from django.db.models import Prefetch, Case, When,Count, Q, Value
@@ -80,6 +82,7 @@ class get_posts_profile(IsOwnerOrReadOnly_Mixin, generics.ListAPIView, generics.
                 ).select_related('user').order_by('-date')
         except:
             qs = post.objects.none() 
+
         return qs
     
     
