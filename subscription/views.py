@@ -1,12 +1,10 @@
 
 from rest_framework import generics
 from rest_framework.response import Response
-from yoga.stripe_utils import StripeUserSubscription
+from checkout.stripe_purchase_subscription import StripeUserSubscription
 import json
 
 from django.conf import settings
-
-from subscription import serializers
 User = settings.AUTH_USER_MODEL
 from users.models import custom_profile
 

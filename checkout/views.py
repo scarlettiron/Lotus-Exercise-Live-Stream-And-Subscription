@@ -1,18 +1,24 @@
 from rest_framework import generics
 from rest_framework.response import Response
 from classPackages.models import publicPackage
-from subscription.models import subscription
-from yoga.stripe_utils import stripeCustomer, buyPost, create_transaction_records, StripeUserSubscription, StripePostProduct, PuchaseLiveClass
 from django.http import JsonResponse
-import json
+from decouple import config
+import stripe
+from .stripe_users import StripeCustomer
+from .stripe_purchase_class import StripePurchaseClass
+from .stripe_purchase_post import StripePostProduct
+from .stripe_purchase_subscription import StripeUserSubscription
 
 from rest_framework.response import Response
 from subscription.serializers import subscription_serializer
 from users.models import custom_profile 
 from posts.models import post
+from classPackages.models import publicPackage
 
 from django.conf import settings
 User = settings.AUTH_USER_MODEL
+
+intent_success_webhook_secret = config('intent_success_webhook_secret')
 
 class purchase_post(generics.GenericAPIView):
     
@@ -23,32 +29,17 @@ class purchase_post(generics.GenericAPIView):
         except:
             return Response(status = 404)
         
-        customer = stripeCustomer(request.user).findCreateCustomerId().stripeCustomer
-
-        if customer:
-            intent_promise = buyPost(Post, customer)
-            if intent_promise:
-                return JsonResponse(intent_promise, status=201, safe=False)
-            else:
-                return Response(status=400)
+        intent_promise = StripePostProduct(Post, self.request.user).create_intent()
+        if intent_promise:
+            return JsonResponse(intent_promise, status=201, safe=False)
         else:
             return Response(status=400)
-        
-    def put(self, request, *args, **kwargs):
-        intent = request.data.get('payment_intentId', None)
-        if not intent:
-            return Response(status=401)
-        transaction = create_transaction_records(intent, request.user)
-        if transaction:
-            return Response(status = 201)
-        else:
-            return Response(status = 401)
         
 
 class purchase_subscription(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         creatorid = self.kwargs['creatorid']
-        customer = stripeCustomer(request.user).findCreateCustomerId()
+        customer = StripeCustomer(request.user).findCreateCustomerId()
         if not customer:
             return Response('could not find customer id', status=404)
         try:
@@ -57,7 +48,7 @@ class purchase_subscription(generics.GenericAPIView):
             return Response('error finding creator')
         
         try:
-            new_sub = StripeUserSubscription(creator=creator, subscriber = customer.stripeCustomer).findCreateSubProductId()
+            new_sub =StripeUserSubscription(creator=creator, subscriber = customer.stripeCustomer).findCreateSubProductId()
             subDetails = new_sub.createUserSubscription()
         except:
             return Response('could not create subscription', status=400)
@@ -93,80 +84,50 @@ class purchase_class(generics.GenericAPIView):
         try:
             package = publicPackage.objects.get(pk=classId)
         except:
-            return Response('class not found', statuc=404)
+            return Response('class not found', status=404)
         
-        customerInfo = stripeCustomer(request.user).findCreateCustomerId().stripeCustomer
+        purchase = StripePurchaseClass(request.user, package)
+        intent = purchase.create_intent(self.request.data['start_time'],self.request.data['end_time']).intent_id
+        return JsonResponse(intent, status=201)
         
-        if not customerInfo:
-            return Response('cannot find customer info', status=404)
         
-        begin_purchase = PuchaseLiveClass(classObj=package, purchaser=request.user, stripeCustomer=customerInfo)
-        purchase = begin_purchase.findCreateClassProductId()
 
-        if not purchase:
-            return Response('cannot find product', status=404)
-        
-        intent_promise = purchase.purchaseClass()
-        
-        if purchase:
-            return JsonResponse(intent_promise, status=201, safe=False)
-        return Response('error', status = 400)
-        
-        
-    def put(self, request, *args, **kwargs):
-        print("starting put request")
-        st_intentId = request.data.get('payment_intentId', None)
-        if not st_intentId:
-            return Response('intent id needed', status = 400)
-        
-        try:
-            Class = publicPackage.objects.get(pk=self.kwargs['classid'])
-        except:
-            return Response('cannot find class', status=404)
-        
-        purchase_process = PuchaseLiveClass(purchaser=request.user, st_intentId=st_intentId, classObj=Class)
-        purchase = purchase_process.completePurchase()
-        if purchase:
-            appointments = purchase_process.createAppointment(requestData = request.data)
-            print(appointments)
-            if appointments:
-                return JsonResponse({'status':"success"}, status = 201, safe=False)
-            print("problem with appointments")
-            return Response(status=400)
-        print("no purchase")
-        return Response(status=400)
-    
-    
-class stripe_subscription_webhook(generics.GenericAPIView):
+class webhook_endpoint(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
-        data = self.request.data
-        print(data)
-        if data['object'] != 'subscription':
-            return Response(status = 403)
+        event = None
+        payload = request.body
+        sig_header =  request.META['HTTP_STRIPE_SIGNATURE']
+
+        try:
+            event = stripe.Webhook.construct_event(
+                payload, sig_header, intent_success_webhook_secret
+            )
         
-        if data['status'] == 'canceled':
-            try:
-                subObj = subscription.objects.filter(creator = data['metadata']['creator'], 
-                                               subscriber = data['metadata']['subscriber']).select_related(
-                                                   'creator', 'subscriber'
-                                               )
-            except:
-                return Response(status = 401)
+        except stripe.error.SignatureVerificationError as e:
+            event = None
+            print('Webhook signature verification failed.' + str(e))
+
+        
+        if not event or event['type'] != 'payment_intent.succeeded':
+            return Response(status = 400)
+        
+        intent = event['data']['object']
+        meta = intent['metadata']
+        
+        purchaser = custom_profile.objects.get(pk=meta['purchaser'])
+        if(meta['purchase_type'] == 'classPackage'):
+            package = publicPackage.objects.get(pk=meta['obj_id'])
+            purchase = StripePurchaseClass(purchaser, package, intent=intent)
+            purchase.create_transactions()
+            purchase.create_appointments()
+            return Response(status=201)
+        
+        if(meta['purchase_type'] == 'post'):
+            p = post.objects.get(pk=meta['obj_id'])
+            purchase = StripePostProduct(p, purchaser).create_transactions()
+            return Response(status = 201)
             
-            sub = StripeUserSubscription(creator = subObj.creator, subscriber = subObj.subscriber)
-            
-            try:
-                canceled = sub.cancelSubscriptionWebhook()
-                if canceled:
-                    return Response(status = 201)
-                else:
-                    return Response(status = 401)
-            except:
-                return Response(status = 401)
-            
-        if data['status'] == 'payment':
-            pass
-            
-        return Response(status = 200)
+        
+        return Response(status=401)
         
         

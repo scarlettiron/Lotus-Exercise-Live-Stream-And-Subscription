@@ -13,7 +13,7 @@ from django.core.management.utils import get_random_secret_key
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 NEW_KEY = get_random_secret_key()
-SECRET_KEY = '47t5812959'
+SECRET_KEY = config('SECRET_KEY')
 
 DEBUG = config('DEBUG')
 
@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'djoser',
     'users.apps.UsersConfig',
-    'profiles',
     'chat',
     'posts',
     'content.apps.ContentConfig',
@@ -73,12 +72,12 @@ MIDDLEWARE = [
     "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
-INTERNAL_IPS = [
+''' INTERNAL_IPS = [
     # ...
     "127.0.0.1",
     # ...
 ]
-
+ '''
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_HEADERS = "*"
 CORS_ALLOW_CREDENTIALS=True
@@ -217,9 +216,9 @@ AWS_S3_CUSTOM_DOMIAN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
 #AWS_DEFAULT_ACL = 
 
 # Static and media files (CSS, JavaScript, Images)
-#STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-#STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMIAN}/static/'
+STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMIAN}/static/'
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 

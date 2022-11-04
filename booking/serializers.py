@@ -35,7 +35,6 @@ class calendar_serializer(serializers.ModelSerializer):
         appointments = obj.all_appointments()
         if appointments:
             if appointments.count() == 1:
-                print("1 appointment")
                 serializer = appointment_serializer(appointments)
             serializer = appointment_serializer(appointments, many=True)
             return serializer.data
