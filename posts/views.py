@@ -77,7 +77,8 @@ class get_posts_profile(IsOwnerOrReadOnly_Mixin, generics.ListAPIView, generics.
         user = self.kwargs['user']
         try:
             qs = post.objects.filter(user__username=user).annotate(
-                liked = Count('post_like', filter = Q(post_like__user__username = self.request.user.username))).annotate(
+                liked = Count('post_like', filter = Q(post_like__user__username = self.request.user.username))
+                ).annotate(
                 purchased = Count('usertransactionitem', filter = Q(usertransactionitem__user__username = self.request.user.username))
                 ).select_related('user').order_by('-date')
         except:

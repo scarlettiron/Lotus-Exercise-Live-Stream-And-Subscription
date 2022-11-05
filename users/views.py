@@ -9,7 +9,7 @@ from django.contrib.postgres.search import SearchQuery, SearchVector, SearchRank
 from django.db.models import Q
 
 
-from yoga.stripe_utils import StripeUserSubscription
+from checkout.stripe_purchase_subscription import StripeUserSubscription
 
 ##Custom Code imports ###
 from .models import custom_profile

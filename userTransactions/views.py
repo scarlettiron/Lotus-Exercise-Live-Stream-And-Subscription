@@ -1,6 +1,6 @@
 from rest_framework import generics, mixins, permissions
 from .models import UserTransactionItem
-from .serializers import userTransaction_serializer
+from .serializers import userTransaction_serializer, purchased_post_serializer
 from django.db.models import Q
 
 
@@ -26,7 +26,11 @@ class user_purchases_posts(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         try:
-            qs = UserTransactionItem.objects.filter(user = user).select_related('post')
+            qs = UserTransactionItem.objects.filter(
+                user = user, post__isnull = False).select_related(
+                    'post', 'post__user', 'post__album')
+            for q in qs:
+                print(q.post)
         except:
             qs = UserTransactionItem.objects.none()
             
