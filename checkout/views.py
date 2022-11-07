@@ -19,6 +19,7 @@ from django.conf import settings
 User = settings.AUTH_USER_MODEL
 
 intent_success_webhook_secret = config('intent_success_webhook_secret')
+subscription_webhook_secret = config('subscription_webhook_secret')
 
 class purchase_post(generics.GenericAPIView):
     
@@ -129,5 +130,30 @@ class webhook_endpoint(generics.GenericAPIView):
             
         
         return Response(status=401)
+    
+class stripe_subscription_webhook(generics.GenericAPIView):
+    def post(self, request, *args, **kwargs):
+        event = None
+        payload = request.body
+        sig_header =  request.META['HTTP_STRIPE_SIGNATURE']
+
+        try:
+            event = stripe.Webhook.construct_event(
+                payload, sig_header, subscription_webhook_secret
+            )
+        
+        except stripe.error.SignatureVerificationError as e:
+            event = None
+            print('Webhook signature verification failed.' + str(e))
+
+
+        if not event:
+            return Response(status = 400)
+        
+        if event['type'] == 'invoice.paid':
+            invoice = event['data']['object']
+            StripeUserSubscription().create_transaction_webhook(invoice)
+        
+        return Response(status=200)
         
         

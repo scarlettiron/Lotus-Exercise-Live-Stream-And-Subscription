@@ -15,7 +15,7 @@ class StripeUserSubscription:
     #creator: required creator(User) db object which the user is subscribing to
     #subscriber: optional subscriber(User) db object of the subscriber
     #local subscriptionProductId obj, see findCreateSubProductId
-    def __init__(self, creator, subscriber=None, 
+    def __init__(self, creator=None, subscriber=None, 
                  localSubscriptionProduct=None, 
                  subscriptionObj = None, st_subscriptionId=None, st_intentId=None):
 
@@ -254,3 +254,56 @@ class StripeUserSubscription:
             return sub
         except:
             return False
+        
+    def create_transaction_webhook(self, invoice):
+        if invoice['billing_reason'] == 'subscription_cycle':
+            
+            sub_id = invoice['subscription']
+            
+            st_sub = stripe.Subscription.retrieve(sub_id)
+            local_sub = subscription.objects.filter(creator = st_sub['metadata']['creator'], subsciber = st_sub['metadata']['subscriber']).select_related(
+            'creator', 'subscriber')[0]  
+            
+            self.creator = local_sub.creator
+            self.subscriber = local_sub.subscriber 
+            self.localSubscriptionObj = local_sub  
+            
+            CustomerId = StripeCustomer(self.subscriber).findCreateCustomerId()
+            
+            try:
+                price = int(invoice['amount'])
+                UserTransactionItem.objects.create(
+                    user = self.subscriber,
+                    units = price,
+                    is_payment = False,
+                    is_purchase = True,
+                    is_refund = False,
+                    subscription = self.localSubscriptionObj
+                )
+            
+                #create record for creator
+                UserTransactionItem.objects.create(
+                    user = self.creator,
+                    units = price,
+                    is_payment = True,
+                    is_purchase = False,
+                    is_refund = False,
+                    subscription = self.localSubscriptionObj
+                )
+            except:
+                return False
+            
+            try:
+                siteTransaction.objects.create(
+                    st_transaction_id = invoice['id'],
+                    customerId = CustomerId.stripeCustomer,
+                    units = price,
+                    is_payment = True,
+                    is_refund = False,
+                    subscription = self.localSubscriptionObj
+                )
+                return True
+            except:
+                return False    
+            
+            
