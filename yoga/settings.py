@@ -216,7 +216,7 @@ AWS_S3_CUSTOM_DOMIAN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
 #AWS_DEFAULT_ACL = 
 
 # Static and media files (CSS, JavaScript, Images)
-STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
+#STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMIAN}/static/'
 STATIC_URL = '/static/'

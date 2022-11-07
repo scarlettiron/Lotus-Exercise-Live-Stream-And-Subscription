@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, response
 from django.db.models import Q
 from .models import thread, message
 from.serializers import message_serializer, user_threads_serializer, create_thread_serializer
@@ -24,7 +24,14 @@ class list_create_thread(MessagesMixin, generics.ListCreateAPIView):
             qs = thread.objects.none()
         return qs
            
+    def create(self, request, *args, **kwargs):
+        data = self.request.data
         
+        t = thread.objects.filter(user1__id = data['user1'], user2__id = data['user2']).select_related('user1', 'user2')
+        if t.count() > 0:
+            serializer = user_threads_serializer(t[0]).data
+            return response.Response(serializer, status = 200)
+        return super().create(request, *args, **kwargs)   
 
 
 ### get all messages belonging to a thread
