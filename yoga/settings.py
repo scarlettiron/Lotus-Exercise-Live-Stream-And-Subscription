@@ -16,6 +16,7 @@ NEW_KEY = get_random_secret_key()
 SECRET_KEY = config('SECRET_KEY')
 
 DEBUG = config('DEBUG')
+local = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -115,14 +116,14 @@ CHANNEL_LAYERS = {
         'CONFIG': {
             "hosts": [('127.0.0.1', 6379)],
             #for deployment
-            #"hosts":[config('REDIS_URL'),],
+            "hosts":[config('REDIS_URL'),],
             "symmetric_encryption_keys":[SECRET_KEY],
         },
     },
 }
-''' red = os.environ.get('REDIS_URL')
+red = os.environ.get('REDIS_URL')
 print(f"REDIS URL: {red}")
-sys.stdout.flush() '''
+sys.stdout.flush() 
 
 ### send emails through mail gun
 EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
@@ -131,7 +132,7 @@ DEFAULT_FROM_EMAIL=config('MAIL_GUN_EMAIL')
 
 DOMAIN = config('FRONTEND_DOMAIN')
 
-
+''' 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -142,10 +143,10 @@ DATABASES = {
         'HOST':'localhost',
     }, 
 
-}  
-
-#DATABASE_URL = config('DATABASE_URL')
-#DATABASES = {"default": dj_database_url.config(default=DATABASE_URL, conn_max_age=int(config('DB_CONNECTION_AGE')))}
+}   
+ '''
+DATABASE_URL = config('DATABASE_URL')
+DATABASES = {"default": dj_database_url.config(default=DATABASE_URL, conn_max_age=int(config('DB_CONNECTION_AGE')))}
 
 ''' CONN_MAX_AGE=config('DB_CONNECTION_AGE')
 db_from_env = dj_database_url.config(conn_max_age=0)
@@ -187,7 +188,7 @@ REST_FRAMEWORK = {
         'users.permissions.IsCreatorOrReadOnly',
     ], 
     'DEFAULT_PAGINATION_CLASS':'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE':6,
+    'PAGE_SIZE':20,
     
 }
 
@@ -216,7 +217,7 @@ AWS_S3_CUSTOM_DOMIAN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
 #AWS_DEFAULT_ACL = 
 
 # Static and media files (CSS, JavaScript, Images)
-#STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMIAN}/static/'
 STATIC_URL = '/static/'

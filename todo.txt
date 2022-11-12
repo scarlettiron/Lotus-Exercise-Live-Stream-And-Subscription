@@ -1,10 +1,5 @@
-frontend
+see why frontend pagination for user messages isnt firing
 
+install django heroku package
 
-backend
-don't forget you temporarliy removed comments from post detail serializer
-trouble shoot why error from above line
-rewrite how we search through posts
-
-create stripe utility function for subscription renewal which
-which creates user transactions 
+deploy to heroku
