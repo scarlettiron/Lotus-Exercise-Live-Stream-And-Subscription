@@ -68,7 +68,7 @@ class user_subscriptions(subscriptionMixin, generics.ListAPIView):
         return self.list(request, *args, **kwargs)
 
 
-class cancel_subscription(generics.GenericAPIView):
+class cancel_subscription(subscriptionMixin, generics.GenericAPIView):
     serializer_class = subscription_serializer
     
     def put(self, request, *args, **kwargs):

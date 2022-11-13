@@ -2,12 +2,13 @@ from rest_framework import generics, permissions
 
 from .models import user_notification
 from .serializers import notifications_serializer
+from .permissions import VerifyIsOwner
 
 from django.db.models import Q
 
 
 
-class notification_list(generics.ListAPIView):
+class notification_list(VerifyIsOwner, generics.ListAPIView):
     serializer_class = notifications_serializer
     queryset = user_notification.objects.filter()
     lookup_field = ['user', 'creator']

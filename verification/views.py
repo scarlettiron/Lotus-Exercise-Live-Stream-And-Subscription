@@ -1,4 +1,4 @@
-''' from rest_framework import generics, mixins, parsers, response
+from rest_framework import generics, mixins, parsers, response
 
 from .models import Verification
 from .serializers import verification_serializer
@@ -19,7 +19,7 @@ class verification_detail(verification_mixin, generics.CreateAPIView,
         except:
             qs = Verification.objects.none()
             
-        return qs '''
+        return qs 
 
         
 

@@ -1,12 +1,15 @@
-from rest_framework import generics, mixins, permissions
+from rest_framework import generics
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from .models import UserTransactionItem
 from .serializers import userTransaction_serializer, purchased_post_serializer
+from .permissions import VerifyIsOwner
 from django.db.models import Q
 
 
 class user_transaction_list(generics.ListAPIView):
     model = UserTransactionItem
     serializer_class = userTransaction_serializer
+    permission_classes = [VerifyIsOwner, IsAuthenticated, IsAdminUser]
     
     def get_queryset(self, *args, **kwargs):
         user = self.request.user
@@ -20,6 +23,7 @@ class user_transaction_list(generics.ListAPIView):
     
     
 class user_purchases_posts(generics.ListAPIView):
+    permission_classes = [VerifyIsOwner, IsAuthenticated, IsAdminUser]
     model = UserTransactionItem
     serializer_class = userTransaction_serializer
     
