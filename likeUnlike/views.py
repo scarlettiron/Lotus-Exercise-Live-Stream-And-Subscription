@@ -1,5 +1,4 @@
-from cgitb import lookup
-from rest_framework import generics
+from rest_framework import generics, permissions
 
 from .models import post_like
 from .serializers import post_like_serializer, post_like_prefetch_serializer
@@ -9,6 +8,7 @@ from django.shortcuts import get_object_or_404
 
 
 class create_list_like(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
     
     queryset = post_like.objects.filter().select_related('post').order_by('-id')
     serializer_class = post_like_serializer

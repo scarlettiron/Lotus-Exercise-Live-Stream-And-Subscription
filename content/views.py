@@ -1,4 +1,4 @@
-from rest_framework import generics, parsers, response
+from rest_framework import generics, parsers, response, permissions
 
 from .models import album, media, supportedMediaContentTypes
 from .mixins import Content_Mixin   
@@ -7,6 +7,7 @@ from .serializers import album_serializer, media_serializer
 
 
 class get_user_albums(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
     queryset = album.objects.filter()
     serializer_class = album_serializer
     parser_classes = [parsers.MultiPartParser, parsers.FormParser]

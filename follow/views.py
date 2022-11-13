@@ -1,10 +1,8 @@
-from cgitb import lookup
 from rest_framework import generics, permissions, response, mixins
 
 from .models import follow
 from .mixins import Follow_Mixin
 from .serializers import follow_serializer, followers_serializer, following_serializer
-from .permissions import isFollowerOrReadOnly
 
 
 
