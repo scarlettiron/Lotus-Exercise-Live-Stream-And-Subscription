@@ -1,5 +1,6 @@
 from rest_framework import generics
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from classPackages.models import publicPackage
 from django.http import JsonResponse
 from decouple import config
@@ -22,6 +23,7 @@ intent_success_webhook_secret = config('intent_success_webhook_secret')
 subscription_webhook_secret = config('subscription_webhook_secret')
 
 class purchase_post(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
     
     def post(self, request, *args, **kwargs):
         post_id = self.kwargs['postid']
@@ -38,6 +40,8 @@ class purchase_post(generics.GenericAPIView):
         
 
 class purchase_subscription(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+        
     def post(self, request, *args, **kwargs):
         creatorid = self.kwargs['creatorid']
         customer = StripeCustomer(request.user).findCreateCustomerId()
@@ -80,6 +84,8 @@ class purchase_subscription(generics.GenericAPIView):
 
 
 class purchase_class(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    
     def post(self, request, *args, **kwargs):
         classId = self.kwargs['classid']        
         try:
