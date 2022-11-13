@@ -4,8 +4,9 @@ from rest_framework.response import Response
 
 from .models import calendar, appointment, classSessionId
 from .serializers import calendar_serializer, classSessionId_serializer, appointment_serializer
+from .mixins import AppointmentMixin
 
-class calendar(generics.RetrieveAPIView):
+class calendar(AppointmentMixin, generics.RetrieveAPIView):
     queryset = calendar.objects.all()
     serializer_class = calendar_serializer
     lookup_field = 'user'
@@ -21,7 +22,7 @@ class class_session_detail(generics.RetrieveUpdateAPIView):
     serializer_class = classSessionId_serializer
 
 
-class appointment_detail(generics.GenericAPIView):
+class appointment_detail(AppointmentMixin, generics.GenericAPIView):
     queryset = appointment.objects.filter().select_related('packageSessionId')
     lookup_field = 'user'
     serializer_class = appointment_serializer
@@ -30,7 +31,7 @@ class appointment_detail(generics.GenericAPIView):
         pass
     
     
-class appointment_list(generics.ListAPIView):
+class appointment_list(AppointmentMixin, generics.ListAPIView):
     serializer_class = appointment_serializer
     def get_queryset(self):
         user = self.kwargs['user']

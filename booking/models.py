@@ -29,6 +29,7 @@ class appointment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="customerpurchases")
     is_instructor = models.BooleanField(default=False)
     logged_on = models.BooleanField(default=False)
+    canceled = models.BooleanField(default=False)
     
     @property
     def instructor(self):
