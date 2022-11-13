@@ -3,9 +3,8 @@ from .serializers import publicPackage_serializer
 from .models import publicPackage
 from .mixins import isPackageOwnerOrReadOnly_mixin
 
-from booking.models import appointment
 
-class publicPackage_list(generics.ListCreateAPIView,
+class publicPackage_list(isPackageOwnerOrReadOnly_mixin, generics.ListCreateAPIView,
                          mixins.UpdateModelMixin):
     queryset = publicPackage.objects.all().select_related('days_available', 'from_time', 'to_time')
     serializer_class = publicPackage_serializer
