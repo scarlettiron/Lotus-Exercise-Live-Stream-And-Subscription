@@ -7,7 +7,7 @@ from .mixins import verification_mixin
 class verification_detail(verification_mixin, generics.CreateAPIView, 
                           mixins.RetrieveModelMixin):
     model = Verification
-    queryset = Verification.objects.get()
+    queryset = Verification.objects.filter()
     lookup_field = 'user'
     serializer_class = verification_serializer
     parser_classes = [parsers.MultiPartParser, parsers.FormParser, parsers.JSONParser]
