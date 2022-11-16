@@ -1,8 +1,0 @@
-tagging feature
-
-ideas/todo
-
-rewrite checkout views
-add webhooks for subscription renewals
-
-
