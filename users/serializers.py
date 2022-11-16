@@ -12,7 +12,7 @@ from django.conf import settings
 User = settings.AUTH_USER_MODEL
 
 
-### used for viewing full user profile page
+### used for viewing full user profile page without private information
 class profile_serializer(serializers.ModelSerializer):
     subscribed = serializers.SerializerMethodField('get_subscribed', read_only=True)
     following = serializers.SerializerMethodField(read_only=True)
@@ -74,6 +74,12 @@ class profile_serializer(serializers.ModelSerializer):
         except:
             return None
                   
+
+#for getting logged in users private information
+class private_profile_serializer(serializers.ModelSerializer):
+    class Meta:
+        model = custom_profile
+        fields = '__all__'
 
 
 class create_user_serializer(serializers.ModelSerializer):

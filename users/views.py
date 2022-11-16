@@ -13,7 +13,7 @@ from checkout.stripe_purchase_subscription import StripeUserSubscription
 
 ##Custom Code imports ###
 from .models import custom_profile
-from .serializers import profile_serializer, create_user_serializer, ResetPasswordEmailRequestSerializer
+from .serializers import profile_serializer, private_profile_serializer, create_user_serializer
 from .mixins import IsCreatorOrReadOnly_Mixin
 
 
@@ -43,7 +43,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
     
 
     
-### Get or update certain user ###
+### Get or update user ###
 ### for updating users subscription price: see update_subscription_price further down
 class user_detail(IsCreatorOrReadOnly_Mixin, generics.GenericAPIView, mixins.RetrieveModelMixin, 
            mixins.UpdateModelMixin):
@@ -52,6 +52,12 @@ class user_detail(IsCreatorOrReadOnly_Mixin, generics.GenericAPIView, mixins.Ret
     parser_classes = [parsers.MultiPartParser, parsers.FormParser, parsers.JSONParser]
     lookup_field = 'username'
     
+    def get_serializer_class(self, *args, **kwargs):
+        username = self.kwargs['username']
+        if self.request.user.username == username:
+            return private_profile_serializer
+        return profile_serializer
+    
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
     
@@ -59,8 +65,9 @@ class user_detail(IsCreatorOrReadOnly_Mixin, generics.GenericAPIView, mixins.Ret
         return self.partial_update(request, *args, **kwargs)
     
     
-class updateUserPics(IsCreatorOrReadOnly_Mixin, generics.GenericAPIView):
-    pass
+    
+    
+
  
 ### get list of all users ###
 class user_list(IsCreatorOrReadOnly_Mixin, generics.ListCreateAPIView):
