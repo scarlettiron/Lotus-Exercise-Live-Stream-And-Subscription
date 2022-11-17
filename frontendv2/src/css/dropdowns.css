@@ -1,0 +1,44 @@
+@import '../App.css';
+
+.drop-menu-btn{
+    outline: none;
+    border:none;
+    text-decoration: none;
+    padding:10px;
+    background-color: transparent;
+}
+
+.drop-menu-btn:focus{
+    outline: none;
+}
+
+.drop-item-btn{
+    outline: none;
+    border:none;
+    text-decoration: none;
+    padding:10px;
+    background-color: transparent;
+    color:var(--theme-secondary);
+}
+
+.drop-item-btn .btn-active{
+    background-color: var(--theme-secondary);
+    color:white;
+}
+
+
+.drop-item-btn:hover{
+    background-color: var(--theme-secondary);
+    color:white;
+}
+
+.drop-item-btn:focus{
+    outline: none;
+}
+
+.transaction-drop{
+    border-radius:25px;
+    background-color: var(--theme-secondary);
+    color:white;
+    margin:10px;
+}

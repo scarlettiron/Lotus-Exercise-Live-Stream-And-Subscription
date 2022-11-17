@@ -1,0 +1,9 @@
+@font-face {
+    font-family: InterReqular;
+    src: url(./fonts/inter/InterRegular.ttf);
+}
+
+@font-face {
+    font-family: Nunito;
+    src: url(./fonts/Nunito/Nunito-VariableFont_wght.ttf);
+}

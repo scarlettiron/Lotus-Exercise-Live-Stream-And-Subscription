@@ -1,0 +1,40 @@
+@import '../App.css';
+
+.comment-username{
+    font-weight: var(--font-weight-1);
+    color: var(--text-secondary);
+    margin-left:5px;
+}
+
+.comment-profile-pic{
+    width:50px;
+    height:50px;
+}
+.comment-text-wrapper{
+    overflow-wrap:break-word;
+    display:flex;
+    flex-wrap:wrap;
+    margin-top:15px;
+    margin-left:5px;
+    margin-right:5px;
+    align-items: center;
+}
+.comment-text{
+    color:var(--text-primary);
+    font-weight: 700;
+    margin-top:auto;
+    margin-bottom:auto;
+}
+.comment-date{
+    color:var(--text-secondary);
+    font-weight:400;
+}
+
+
+.margin-top-10{
+    margin-top: 10px;
+}
+
+.w-70{
+    width:70%;
+}

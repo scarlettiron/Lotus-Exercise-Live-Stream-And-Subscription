@@ -1,0 +1,25 @@
+@import'../App.css';
+
+.search-profile-pic-wrapper{
+    width:70px;
+    height:70px;
+}
+
+.search-user-username{
+    font-weight: var(--font-weight-1);
+    color: var(--text-secondary);
+    margin:auto;
+}
+
+.search-user-container{
+    padding:15px;
+    display:flex;
+    flex-wrap:wrap;
+    justify-content: space-between;
+}
+
+.search-user-split-container{
+    padding:10px;
+    display:flex;
+}
+

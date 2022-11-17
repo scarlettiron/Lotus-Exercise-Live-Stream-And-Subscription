@@ -1,0 +1,13 @@
+:root {
+    --background: FFFAFA;
+    --theme-secondary:00BFFF;
+    --theme-option-2:1E90FF;
+    --text-secondary:778899;
+    --text-primary: black;
+
+    --max-content-width:900px;
+    
+    --btn-text-color-primary: FFFAFA;
+
+    --btn-text-style-primary:"Trebuchet MS", Verdana, sans-serif;
+}

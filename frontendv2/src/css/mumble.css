@@ -1,0 +1,210 @@
+@font-face {
+  font-family: 'MumbleUI';
+  src:  url('MumbleUI.eot?8qc6di');
+  src:  url('MumbleUI.eot?8qc6di#iefix') format('embedded-opentype'),
+    url('MumbleUI.ttf?8qc6di') format('truetype'),
+    url('MumbleUI.woff?8qc6di') format('woff'),
+    url('MumbleUI.svg?8qc6di#MumbleUI') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="mui-"], [class*=" mui-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'MumbleUI' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.mui-add:before {
+  content: "\e900";
+}
+.mui-arrow-down:before {
+  content: "\e901";
+}
+.mui-arrow-left:before {
+  content: "\e902";
+}
+.mui-arrow-right:before {
+  content: "\e903";
+}
+.mui-arrow-up:before {
+  content: "\e904";
+}
+.mui-check:before {
+  content: "\e905";
+}
+.mui-chevron-down:before {
+  content: "\e906";
+}
+.mui-chevron-down-circle:before {
+  content: "\e907";
+}
+.mui-chevron-left:before {
+  content: "\e908";
+}
+.mui-chevron-left-circle:before {
+  content: "\e909";
+}
+.mui-chevron-right:before {
+  content: "\e90a";
+}
+.mui-chevron-right-circle:before {
+  content: "\e90b";
+}
+.mui-chevron-up:before {
+  content: "\e90c";
+}
+.mui-chevron-up-circle:before {
+  content: "\e90d";
+}
+.mui-copy:before {
+  content: "\e90e";
+}
+.mui-cross:before {
+  content: "\e90f";
+}
+.mui-delete:before {
+  content: "\e910";
+}
+.mui-download:before {
+  content: "\e911";
+}
+.mui-ellipsis-horizontal:before {
+  content: "\e912";
+}
+.mui-ellipsis-vertical:before {
+  content: "\e913";
+}
+.mui-file:before {
+  content: "\e914";
+}
+.mui-file-lock:before {
+  content: "\e915";
+}
+.mui-folder:before {
+  content: "\e916";
+}
+.mui-folder-lock:before {
+  content: "\e917";
+}
+.mui-info:before {
+  content: "\e918";
+}
+.mui-link:before {
+  content: "\e919";
+}
+.mui-lock:before {
+  content: "\e91a";
+}
+.mui-maximize:before {
+  content: "\e91b";
+}
+.mui-menu:before {
+  content: "\e91c";
+}
+.mui-minimize:before {
+  content: "\e91d";
+}
+.mui-minus:before {
+  content: "\e91e";
+}
+.mui-moon:before {
+  content: "\e91f";
+}
+.mui-plus:before {
+  content: "\e920";
+}
+.mui-power-button:before {
+  content: "\e921";
+}
+.mui-question:before {
+  content: "\e922";
+}
+.mui-redo:before {
+  content: "\e923";
+}
+.mui-remove:before {
+  content: "\e924";
+}
+.mui-repeat:before {
+  content: "\e925";
+}
+.mui-search:before {
+  content: "\e926";
+}
+.mui-settings:before {
+  content: "\e927";
+}
+.mui-share:before {
+  content: "\e928";
+}
+.mui-shuffle:before {
+  content: "\e929";
+}
+.mui-sign-in:before {
+  content: "\e92a";
+}
+.mui-sign-out:before {
+  content: "\e92b";
+}
+.mui-sun:before {
+  content: "\e92c";
+}
+.mui-time:before {
+  content: "\e92d";
+}
+.mui-toggle-off:before {
+  content: "\e92e";
+}
+.mui-toggle-on:before {
+  content: "\e92f";
+}
+.mui-tools:before {
+  content: "\e930";
+}
+.mui-undo:before {
+  content: "\e931";
+}
+.mui-unlink:before {
+  content: "\e932";
+}
+.mui-unlock:before {
+  content: "\e933";
+}
+.mui-upload:before {
+  content: "\e934";
+}
+.mui-user:before {
+  content: "\e935";
+}
+.mui-user-circle:before {
+  content: "\e936";
+}
+.mui-user-group:before {
+  content: "\e937";
+}
+.mui-volume-high:before {
+  content: "\e938";
+}
+.mui-volume-off:before {
+  content: "\e939";
+}
+.mui-volume-on:before {
+  content: "\e93a";
+}
+.mui-zoom-in:before {
+  content: "\e93b";
+}
+.mui-zoom-out:before {
+  content: "\e93c";
+}

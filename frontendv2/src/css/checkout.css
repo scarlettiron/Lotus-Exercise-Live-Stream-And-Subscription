@@ -1,0 +1,49 @@
+.card-input-wrapper{
+    width:100%;
+    margin: 0 auto;
+    height:40%;
+
+}
+
+.purchase-popup-container{
+    position:absolute;
+    z-index:10;
+    width:300px;
+    min-height:40vh;
+    border-radius: 15px;
+    border:solid 1px var(--theme-secondary);
+    background-color: white;
+    margin:0 auto;
+    padding:15px;
+    transform: translate(0%, -60%);
+}
+
+.popup-content-container{
+    width:100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.pay-btn{
+    margin-top:30px;
+    width:100%;
+    background-color: var(--theme-secondary);
+    color:white;
+    padding:10px;
+    text-decoration: none;
+    outline: none;
+    border:none;
+    border-radius:10px;
+}
+
+
+.class-checkout-popup{
+    width:100%;
+    height:90%;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin:0px auto;
+}
+

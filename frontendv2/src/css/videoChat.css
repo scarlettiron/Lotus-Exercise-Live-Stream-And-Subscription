@@ -1,0 +1,62 @@
+@import '../App.css';
+
+
+.remote-chat-video{
+    position:absolute;
+    z-index: 1;
+    height:100%;
+    width:100%;
+    object-fit: cover;
+    background:black;
+}
+
+.stream-controls{
+    position: absolute;
+    bottom:25px;
+    width:100%;
+    z-index:3;
+    display:flex;
+    justify-content: center;
+    text-align: center;
+}
+
+.stream-overlay{
+    position: absolute;
+    z-index:2;
+    height:100%;
+    width:100%;
+}
+
+.local-video-container{
+    position: absolute;
+    bottom:15px;
+    right:15px;
+    z-index:2;
+    width:40%;
+    height:30%;
+    overflow: hidden;
+}
+
+.local-video{
+    width:100%;
+    height:100%;
+    object-fit: cover;
+    background-color: var(--theme-secondary);
+}
+
+.stream-btn{
+    opacity:40%;
+    background-color: white;
+    color:black;
+}
+
+.stream-btn-svg{
+    height:25px;
+    width:25px;
+}
+
+.call-with-username{
+    position: absolute;
+    top:30px;
+    left:30px;
+}

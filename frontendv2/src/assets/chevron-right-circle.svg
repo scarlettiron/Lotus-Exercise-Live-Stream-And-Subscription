@@ -1,0 +1,7 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+<title>chevron-right-circle</title>
+<g fill="#b2cae2">
+    <path d="M16 32c-8.822 0-16-7.178-16-16s7.178-16 16-16c8.822 0 16 7.178 16 16s-7.178 16-16 16zM16 2c-7.72 0-14 6.28-14 14s6.28 14 14 14c7.72 0 14-6.28 14-14s-6.28-14-14-14z"></path>
+    <path d="M19 16l-7 7v3l10-10-10-10v3l7 7z"></path>
+</g>
+</svg>

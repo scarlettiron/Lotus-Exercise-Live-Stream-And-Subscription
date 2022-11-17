@@ -1,0 +1,53 @@
+@import '../App.css';
+
+.login-wrapper{
+    display: inline-block;
+    width: 100%;
+    padding-right: 0px;
+    padding-left: 0px;
+    margin:0 auto;
+}
+
+.login-container{
+    padding:10px;
+    margin:auto 0px; 
+    margin-top:50px;
+    width:90vw;
+    background-color: var(--theme-secondary);
+    border-radius: 16px;
+    display:flex;
+    flex-wrap: wrap;
+}
+
+
+
+@media (min-width: 576px) {
+    .login-wrapper {
+        width: var(--container-breakpoint-1);
+    }
+    .login-container {
+        height:auto;
+        width: 400px;
+        margin:80px;
+    }
+}
+
+@media (min-width: 768px) {
+    .login-wrapper {
+        width: var(--container-breakpoint-2);
+    }
+}
+
+@media (min-width: 992px) {
+    .login-wrapper {
+        width: var(--max-content-width);
+    }
+
+    
+}
+@media (min-width: 1200px) {
+    .login-wrapper {
+        width: var(--max-content-width);
+    }
+
+}

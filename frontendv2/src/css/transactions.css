@@ -1,0 +1,30 @@
+@import '../App.css';
+
+.t-item-wrapper{
+    width:90%;
+    padding:5px;
+    border:solid 3px var(--theme-secondary);
+    border-radius:20px;
+    margin-left:auto;
+    margin-right:auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.t-desc{
+    margin:10px;
+}
+
+.t-items-container{
+    width:100%;
+}
+
+.text-payment{
+    color:rgb(4, 163, 4);
+}
+
+.text-purchase{
+    color:red;
+}
