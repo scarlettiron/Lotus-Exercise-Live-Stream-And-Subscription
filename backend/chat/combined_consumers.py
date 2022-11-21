@@ -2,7 +2,8 @@ from cgitb import text
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
-from .models import thread
+from .models import thread, message
+from .serializers import message_serializer
 
 
 @database_sync_to_async
@@ -13,12 +14,14 @@ def verify_user(requesting_user, thread_id):
             return True
     except:
         return False 
+    
 
 class combinedChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.user = self.scope['user']
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = 'chatcall_%s' % self.room_name
+        thread = None
 
         #verify that user is a thread member
             # Join room group
@@ -108,7 +111,18 @@ class combinedChatConsumer(AsyncWebsocketConsumer):
             'sender':sender,
             'candidateSignal':candidateSignal
         }))
-        
+    
+    @database_sync_to_async  
+    def create_call_message(self, payload):
+        sender = int(payload.sender)
+        thread = int(payload.thread)
+        return message.objects.create(
+                sender__id = sender,
+                thread__id = thread,
+                is_call = True,
+            )
+
+            
     async def decline_call_request(self, event):
         print('decline call request')
         type = event['type']
@@ -122,6 +136,12 @@ class combinedChatConsumer(AsyncWebsocketConsumer):
             'sender':sender,
             'candidateSignal':candidateSignal
         }))
+        
+        payload = json.loads({
+            thread:thread,
+            sender:sender,
+        })
+        create_record = await self.create_call_message(payload)
         
         
     async def call_ended(self, event):

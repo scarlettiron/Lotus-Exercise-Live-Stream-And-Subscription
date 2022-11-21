@@ -62,7 +62,7 @@ class post_feed(generics.ListAPIView):
             qs = super().get_queryset(*args, **kwargs)
             search_results = qs.get_user_feed(user).select_related('user')
         else:
-            search_results = post.objects.all().select_related('user').order_by('-date')
+            search_results = post.objects.all().select_related('user').order_by('-date').annotate(liked = Value(0))
         return search_results
     
 

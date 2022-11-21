@@ -25,7 +25,7 @@ class thread(models.Model):
 
 class message(models.Model):
     sender = models.ForeignKey(custom_profile, on_delete=models.CASCADE)
-    body = models.CharField(max_length=1000)
+    body = models.CharField(max_length=1000, blank=True, null=True)
     date = models.DateTimeField(auto_now_add=True)
     thread = models.ForeignKey(thread, on_delete=models.CASCADE, related_name="messages")
     is_call = models.BooleanField(default=False)
