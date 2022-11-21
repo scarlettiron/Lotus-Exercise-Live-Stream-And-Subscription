@@ -1,5 +1,7 @@
 import React, {createContext, useContext, useEffect, useRef, useState} from 'react'
 import AuthContext from './AuthContext'
+import {chatUrls} from '../utils/BaseInfo'
+import CustomFetch from '../utils/CustomFetch'
 import {w3cwebsocket as w3cSocket} from 'websocket'
 import { socketUrls, serverUrl } from '../utils/BaseInfo'
 import Peer from 'simple-peer'
@@ -11,6 +13,7 @@ export default PrivateSocketContext;
 
 
 export const PrivateSocketProvider = ({children}) => {
+    const {getThreadMessages} = chatUrls
 
     const {UserProfile} = useContext(AuthContext)
     const [contextThread, setContextThread] = useState(null)
@@ -64,6 +67,7 @@ export const PrivateSocketProvider = ({children}) => {
     }
 
 
+
     //socket functions//
     const sendSocketMessage = (data) => {
         const socketPayload = JSON.stringify({'type':'chat_message',
@@ -80,19 +84,32 @@ export const PrivateSocketProvider = ({children}) => {
         }
         if(data.type === 'call_request'){
             if(data.sender !== UserProfile.id){
+            setCalling(true)
             call.current = {status:true, caller:data.sender, candidateSignal:data.candidateSignal}
             }
         }
         if(data.type === 'accept_call_request'){
             handleCallAccepted(data)
         }
-        if(data.type === 'call_request_declined'){
+        if(data.type === 'decline_call_request'){
             if(data.sender !== UserProfile.id){
+            addNewMessageToState({
+                sender:data.sender,
+                thread:data.thread,
+                body:null,
+                is_call:true
+            })
             setCallDeclined(() => true)
             handleCleanup()
             }
         }
         if(data.type === 'call_ended'){
+            addNewMessageToState({
+                sender:data.sender,
+                thread:data.thread,
+                body:null,
+                is_call:true
+            })
             if(data.sender !== UserProfile.id){
                 handleCleanup()
             }
@@ -102,15 +119,20 @@ export const PrivateSocketProvider = ({children}) => {
     //reset everything 
     const handleCleanup = () =>{
         setCalling(() => false)
-        stream.current.getTracks().forEach(track => {
-            track.stop()    
-        })
+        try{
+            stream.current.getTracks().forEach(track => {
+                track.stop()    
+            })
+            peerSignal.current.destroy()
+        }
+        catch{
+            console.log('no tracks to stop')
+        }
+
         stream.current = null
         setCallAccepted(() => false)
         call.current = {status:false}
         peersConnected.current = false
-        console.log(peerSignal.current)
-        peerSignal.current.destroy()
         remoteVideo.current = null
         localVideo.current = null
 
@@ -217,7 +239,7 @@ export const PrivateSocketProvider = ({children}) => {
     const handleDeclineCall = () => {
         handleCleanup()
         const socketPayload = JSON.stringify({
-            type:'call_request_declined',
+            type:'decline_call_request',
             sender:UserProfile.id,
             candidateSignal:null,
             thread:contextThread,

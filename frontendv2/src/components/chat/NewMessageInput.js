@@ -6,7 +6,7 @@ import { chatUrls} from '../../utils/BaseInfo'
 import Button2 from '../general/Button2'
 import {ReactComponent as Airplane} from '../../assets/paper-plane.svg'
 import TextareaAutosize from 'react-textarea-autosize';
-import { CountRenders } from '../../utils/CountRenders'
+
 const NewMessageInput = React.memo(({displaySendingPopup}) => {
     const tag = useRef()
     const {UserProfile} = useContext(AuthContext)

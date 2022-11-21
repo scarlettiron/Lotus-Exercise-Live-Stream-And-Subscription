@@ -126,7 +126,7 @@ export const AuthProvider = React.memo(({children}) => {
             }
         }
 
-    },[AuthTokens, setUser, getUserProfileInfo])
+    },[AuthTokens, setAuthTokens, setUser, getUserProfileInfo])
 
     const handleSetUserProfile = (data) => {
         setUserProfile(data)

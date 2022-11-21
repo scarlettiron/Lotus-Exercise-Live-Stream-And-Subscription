@@ -10,7 +10,7 @@ import '../../css/chat.css'
 
 const MessageContainer = ({loading, getNextPageOfMessages}) => {
   const {UserProfile} = useContext(AuthContext)
-  const {messages, call} = useContext(PrivateSocketContext)
+  const {messages, call, calling} = useContext(PrivateSocketContext)
 
   const displaySendingPopup = useRef(null)
   const initialMount = useRef(true)
@@ -51,6 +51,11 @@ const MessageContainer = ({loading, getNextPageOfMessages}) => {
   }, [messages, loading])
 
 
+  useEffect(() => {
+    if(call.current.caller !== UserProfile.id){
+      scrollToBottom()
+    }
+  }, [calling])
 
   return (
         <div className='chat-container'>
@@ -73,17 +78,17 @@ const MessageContainer = ({loading, getNextPageOfMessages}) => {
           messages.results.map((message, index) => 
           { if(index === 0){ 
                 return <div ref={handleTrackPosition} key={index}>
-                          <Message message={message} User={UserProfile}/>
+                          <Message message={message} thread={messages.thread}/>
                         </div>
               }
-            return <Message message={message} User={UserProfile} key={index} />
+            return <Message message={message} key={index} thread={messages.thread}/>
           })
         }
 
         {displaySendingPopup.current &&
-          <Message message={displaySendingPopup.current} user={UserProfile} status = 'pending' />
+          <Message message={displaySendingPopup.current} status = 'pending' thread={messages.thread}/>
         }
-        { call.current.status &&
+        {calling && call.current.caller !== UserProfile.id &&
           <CallNotificationPopup />
         }
         </div>

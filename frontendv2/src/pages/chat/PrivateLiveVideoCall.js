@@ -57,11 +57,11 @@ const PrivateLiveVideoCall = () => {
         localPeerConnection.current.onsignalingstatechange = handleSignalingStateChangeEvent; */
     }
 
-    const sendMessage = (msg) => {
+    /* const sendMessage = (msg) => {
         let message = JSON.stringify({'type':'iceCandidate', 'message':message})
         socket.current.send(message)
 
-    }
+    } */
 
 
     //initial socket setup

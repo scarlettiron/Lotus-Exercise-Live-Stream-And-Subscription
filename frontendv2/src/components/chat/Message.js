@@ -1,28 +1,28 @@
-import React from 'react'
+import React, {useContext} from 'react'
+import AuthContext from '../../context/AuthContext'
 
 
-const Message = ({message, User, status='sent'}) => {
-/*    const date = new Date(message.date)
-   const messageDate = date.toDateString()  */
-
-
-   const messageStyle = message.sender === User.id ?{
-       wrapper : 'message-wrapper sender-wrapper',
-       container : 'message-container sender-message-bg'
-   } 
-   : {
-       wrapper :'message-wrapper',
-       container : 'message-container receiver-message-bg'
-   }
+const Message = ({message, status='sent', thread}) => {
+    const {UserProfile} = useContext(AuthContext)
+    const sender = thread.user1.pk === message.sender ? thread.user1 : thread.user2
+    const receiver = thread.user1.pk === message.sender ? thread.user2 : thread.user1
 
   return (
-    <div className={messageStyle.wrapper}>
-        <div className={messageStyle.container}>
-            <p className='message-body'>{message.body}</p>
+    <div className={message.sender === UserProfile.id ? 'message-wrapper sender-wrapper' : 'message-wrapper'}>
+        <div className={message.sender === UserProfile.id ? 'message-container sender-message-bg' : 'message-container receiver-message-bg'}>
+            {message.is_call ?
+                <p className='message-body'>
+                    {sender.pk === UserProfile.id ? 
+                    `You called ${receiver.username}` : `${sender.username} called you`}
+                </p>
+                :
+                <p className='message-body'>{message.body}</p>
+
+            }
         </div>
         {status === 'pending' && <p className='text-secondary'>Sending</p>}
     </div>
   )
 }
 
-export default Message
+export default React.memo(Message)

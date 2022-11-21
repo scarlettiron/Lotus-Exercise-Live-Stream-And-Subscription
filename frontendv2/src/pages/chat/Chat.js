@@ -13,7 +13,7 @@ import VideoCallContainer from '../../components/chat/VideoCallContainer'
 const Chat = React.memo(() => {
     /// socket and peer context ///
     const {messages, handleInitialMessagesState, handleMessagesResultsState, 
-        calling, callAccepted, setContextThread} = useContext(PrivateSocketContext)
+        calling, call, callAccepted, setContextThread} = useContext(PrivateSocketContext)
 
     const {UserProfile} = useContext(AuthContext) 
     const {threadid} = useParams()
@@ -105,10 +105,10 @@ const Chat = React.memo(() => {
         <div className='main-wrapper'>
                     <SideBar chat={true}/>
             <div className='display-inline'>
-                {calling && <VideoCallContainer />}
+                {calling && call.current.caller === UserProfile.id && <VideoCallContainer />}
                 {callAccepted && <VideoCallContainer/>}
 
-                {!calling && !callAccepted &&
+                {(calling & call.current.sender !== UserProfile.id) | !calling && !callAccepted &&
                 <MessageContainer 
                 loading={loadingMessages} 
                 getNextPageOfMessages={getNextPageOfMessages}
