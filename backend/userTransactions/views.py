@@ -9,7 +9,7 @@ from django.db.models import Q
 class user_transaction_list(generics.ListAPIView):
     model = UserTransactionItem
     serializer_class = userTransaction_serializer
-    permission_classes = [VerifyIsOwner, IsAuthenticated, IsAdminUser]
+    permission_classes = [VerifyIsOwner, IsAuthenticated]
     
     def get_queryset(self, *args, **kwargs):
         user = self.request.user
@@ -23,7 +23,7 @@ class user_transaction_list(generics.ListAPIView):
     
     
 class user_purchases_posts(generics.ListAPIView):
-    permission_classes = [VerifyIsOwner, IsAuthenticated, IsAdminUser]
+    permission_classes = [VerifyIsOwner, IsAuthenticated]
     model = UserTransactionItem
     serializer_class = userTransaction_serializer
     
