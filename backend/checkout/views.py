@@ -19,7 +19,7 @@ from django.conf import settings
 User = settings.AUTH_USER_MODEL
 
 
-class purchase_post(generics.GenericAPIView):
+class PurchasePost(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
     
     def post(self, request, *args, **kwargs):
@@ -36,7 +36,7 @@ class purchase_post(generics.GenericAPIView):
             return Response(status=400)
         
 
-class purchase_subscription(generics.GenericAPIView):
+class PurchaseSubscription(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
         
     def post(self, request, *args, **kwargs):
@@ -74,7 +74,7 @@ class purchase_subscription(generics.GenericAPIView):
         
 
 
-class purchase_class(generics.GenericAPIView):
+class PurchaseClass(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
     
     def post(self, request, *args, **kwargs):
