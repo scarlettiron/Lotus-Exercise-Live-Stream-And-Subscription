@@ -80,8 +80,8 @@
 
 .profile-pic-overlap-wrapper{
     position:absolute;
+    margin-top:65px;
     z-index:15;
-    margin:auto;
 }
 
 
