@@ -564,3 +564,7 @@ outline:none;
         display:flex;
     }
 }
+
+.mb-20{
+    margin-bottom: 20px;
+}

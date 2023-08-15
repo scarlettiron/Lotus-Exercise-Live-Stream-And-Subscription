@@ -78,6 +78,12 @@
     justify-content: center;
 }
 
+.profile-pic-overlap-wrapper{
+    position:absolute;
+    z-index:15;
+    margin:auto;
+}
+
 
 .about-show-btn-wrapper{
     width:100%;
