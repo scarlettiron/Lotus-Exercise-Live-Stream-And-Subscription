@@ -161,6 +161,9 @@ export const AuthProvider = React.memo(({children}) => {
         return response
     }
 
+    const handleUpdateUserProfile = async () => {
+        await getUserProfileInfo(User.username)
+    }
 
     const contextData = {
         loginUser:loginUser,
@@ -174,6 +177,8 @@ export const AuthProvider = React.memo(({children}) => {
         updateToken:updateToken,
         resetPassword:resetPassword,
         confirmPasswordReset:confirmPasswordReset,
+        handleUpdateUserProfile:handleUpdateUserProfile,
+        
     }
 
      useEffect(() => {

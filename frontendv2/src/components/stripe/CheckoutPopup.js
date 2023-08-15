@@ -2,7 +2,6 @@ import React, {useState, useContext} from 'react'
 import AuthContext from '../../context/AuthContext'
 import { useHistory } from 'react-router-dom'
 import CustomFetch from '../../utils/CustomFetch'
-import {convertLocalToDbTime, addAndConvertToDbTime} from '../../utils/DateFunctions'
 import { checkoutUrls} from '../../utils/BaseInfo'
 import { CardElement, useStripe, useElements} from '@stripe/react-stripe-js'
 import LoadingSpinner from '../general/LoadingSpinner'
@@ -17,7 +16,7 @@ const CheckoutPopup = ({onComplete, onClose, amount, type,
                                     lookupKey}) => {
     const history = useHistory() 
     
-    const {User} = useContext(AuthContext)
+    const {User, handleUpdateUserProfile} = useContext(AuthContext)
     if(!User){history.push('/signup')}
 
     //for developers only
@@ -31,9 +30,8 @@ const CheckoutPopup = ({onComplete, onClose, amount, type,
     const elements = useElements()
 
     
-    const {purchaseSubscription, confirmPurchaseSubscription, 
-        purchasePost, confirmPurchasePost, purchaseClass, 
-        confirmPurchaseClass} = checkoutUrls
+    const {purchaseSubscription, 
+        purchasePost, confirmPurchasePost} = checkoutUrls
 
     const [btnDisabled, setBtnDisabled] = useState(false)
     const [processing, setProcessing] = useState(false)
@@ -65,7 +63,6 @@ const CheckoutPopup = ({onComplete, onClose, amount, type,
         const {response, data} = await CustomFetch(`${purchaseSubscription.url}/${lookupKey}`, fetchConfig)
 
         if(response.status === 201){
-            const subId = data.subscription_id
             const {error, paymentIntent} = await stripe.confirmCardPayment(data.client_secret, {
                 payment_method:{
                     type: 'card',
@@ -74,15 +71,8 @@ const CheckoutPopup = ({onComplete, onClose, amount, type,
                 })
 
             if(!error && paymentIntent.status === 'succeeded'){
-                const fetchConfig = {method:'PUT', 
-                body:JSON.stringify({payment_intentId: paymentIntent.id, subscription_id:subId})}
-                const {response, data} = await CustomFetch(`${confirmPurchaseSubscription.url}/${lookupKey}`, fetchConfig)
-                if(response.status === 201){
-                    onComplete()
-                }
-                else{
-                    handleError()
-                }
+                await handleUpdateUserProfile()
+                onComplete()
             }
             else{
                 handleError()
@@ -106,7 +96,7 @@ const CheckoutPopup = ({onComplete, onClose, amount, type,
                 if(!error && paymentIntent.status === 'succeeded'){
                     const fetchConfig = {method:'PUT', 
                     body:JSON.stringify({payment_intentId:paymentIntent.id})}
-                    const {response, data} = await CustomFetch(`${confirmPurchasePost.url}/${lookupKey}`, fetchConfig)
+                    const {response} = await CustomFetch(`${confirmPurchasePost.url}/${lookupKey}`, fetchConfig)
                     if (response.status === 201){
                         setProcessing(false)
                         onComplete(lookupKey)
@@ -178,7 +168,7 @@ const CheckoutPopup = ({onComplete, onClose, amount, type,
         {showError &&
         <>
             <div className='justify-content-center'>
-                <h2>An Error has occured, please try again later</h2>
+                <h2>An Error has occurred, please try again later</h2>
             </div>
         </>
         }
