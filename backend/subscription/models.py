@@ -10,7 +10,7 @@ class subscription(models.Model):
     auto_draft = models.BooleanField(default=True)
     begin_date = models.DateTimeField()
     end_date = models.DateTimeField()
-    st_subId = models.CharField(max_length=500)
+    st_subscriptionId = models.CharField(max_length=500)
     
     @property
     def price(self):

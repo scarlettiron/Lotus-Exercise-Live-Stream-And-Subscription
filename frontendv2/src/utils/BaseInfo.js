@@ -1,5 +1,5 @@
 //API ENDPOINTS
-const isDevLocal = false
+const isDevLocal = true
 
 const baseApiUrl = isDevLocal ? process.env.REACT_APP_SERVER_NAME_LOCAL : process.env.REACT_APP_SERVER_NAME
 

@@ -118,8 +118,11 @@ class custom_profile(AbstractUser):
 
 class customerId(models.Model):
     user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True)
+    # Id for stripe customer object
     customerId = models.CharField(max_length=500)
     customerEmail = models.EmailField()
+    has_default_payment_method = models.BooleanField(default=False)
+    payment_method_last_four = models.IntegerField(blank=True, null=True)
 
 ''' class tag(models.Model):
     name = models.CharField(max_length=100)

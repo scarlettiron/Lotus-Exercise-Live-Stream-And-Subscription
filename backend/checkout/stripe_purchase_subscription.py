@@ -238,7 +238,7 @@ class StripeUserSubscription:
             return False
         
         
-    # for use with webwook when subscription cancelation has been received
+    # for use with webhook when subscription cancellation has been received
     def cancelSubscriptionWebhook(self):
         if not self.creator or not self.subscriber:
             raise Exception('creator and subscriber required')

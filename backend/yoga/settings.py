@@ -113,9 +113,9 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [config('REDIS_URL')],
+            #"hosts": [config('REDIS_URL')],
             "symmetric_encryption_keys":[SECRET_KEY],
-            #"hosts": [('localhost', 6379)]
+            "hosts": [('localhost', 6379)]
         },
     },
 }
@@ -131,7 +131,7 @@ DEFAULT_FROM_EMAIL=config('MAIL_GUN_EMAIL')
 DOMAIN = config('FRONTEND_DOMAIN')
 
  
-''' DATABASES = {
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'yoga2',
@@ -141,14 +141,15 @@ DOMAIN = config('FRONTEND_DOMAIN')
         'HOST':'localhost',
     }, 
 
-}  ''' 
+}  
 
  
 
-DATABASE_URL = config('DATABASE_URL')
-DATABASES = {"default": dj_database_url.config(default=DATABASE_URL, conn_max_age=int(config('DB_CONNECTION_AGE')))}
+#DATABASE_URL = config('DATABASE_URL')
+#DATABASES = {"default": dj_database_url.config(default=DATABASE_URL, conn_max_age=int(config('DB_CONNECTION_AGE')))}
 
-''' CONN_MAX_AGE=config('DB_CONNECTION_AGE')
+CONN_MAX_AGE=config('DB_CONNECTION_AGE')
+'''
 db_from_env = dj_database_url.config(conn_max_age=0)
 DATABASES['default'].update(db_from_env) '''
 
@@ -192,8 +193,6 @@ REST_FRAMEWORK = {
     
 }
 
-#'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-#    'PAGE_SIZE': 10
 
 LANGUAGE_CODE = 'en-us'
 
