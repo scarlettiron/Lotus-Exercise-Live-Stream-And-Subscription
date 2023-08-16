@@ -1,0 +1,12 @@
+@import '../App.css';
+
+
+.text-error{
+    color:red;
+}
+
+.bg-error{
+    background-color: rgb(255, 219, 219);
+    border:1px solid red;
+    padding:0px;
+}

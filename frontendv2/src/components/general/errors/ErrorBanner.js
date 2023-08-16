@@ -1,5 +1,6 @@
 import React from 'react'
 import '../../../css/general.css'
+import '../../../css/errors-success.css'
 
 const ErrorBanner = React.memo(({error, errorMessage}) => {
   return (

@@ -2,6 +2,7 @@ import dayjs from 'dayjs'
 import GetCookie from './GetCookie'
 import jwt_decode from 'jwt-decode'
 import {loginRefreshUrl} from './BaseInfo'
+import { response } from 'express'
 
 
 const updateToken = async (AuthTokens) => {
@@ -31,7 +32,8 @@ const logoutUser = () => {
     window.location.path = '/login' 
 }
 
-const CustomFetch = async (dataUrl, fetchConfig={}, contentTypeOverRide=false) => {
+
+const CustomFetchLegWork = async (dataUrl, fetchConfig={}, contentTypeOverRide=false) => {
     let AuthTokens = JSON.parse(localStorage.getItem('authTokens'))
     let User = jwt_decode(AuthTokens.access)
     let tokens = AuthTokens
@@ -82,6 +84,17 @@ const CustomFetch = async (dataUrl, fetchConfig={}, contentTypeOverRide=false) =
 
     // return fetch response
     return {response, data}
+}
+const CustomFetch = async (dataUrl, fetchConfig={}, contentTypeOverRide=false) => {
+    try{
+        const {response, data} = await CustomFetchLegWork(dataUrl, fetchConfig={}, contentTypeOverRide=false)
+        return {response, data}
+    }
+    catch{
+        const response = {status:400}
+        const data = false
+        return {response, data}
+    }
 }
 
 export default CustomFetch;

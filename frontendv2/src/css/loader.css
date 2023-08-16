@@ -22,11 +22,13 @@
     flex-wrap: wrap;
 }
 
-@media min-width(650px){
+@media (min-width = 650px){
   .lds-container{
-    max-width:600px;
+    max-width:300px;
   }
 }
+
+
 .lds-wrapper{
   display: flex;
   justify-content: center;

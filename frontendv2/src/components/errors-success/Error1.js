@@ -1,14 +1,14 @@
 import React from 'react'
 import '../../css/general.css'
+import '../../css/errors-success.css'
 
-const Error1 = ({message = null}) => {
+const Error1 = React.memo(({errorMessage=null, error=null}) => {
   return (
-    <div className='w-100 justify-content-center'>
-        <h4 className='text-primary'>
-            {message}
-        </h4>
+    <div className='margin-auto w-90 justify-content-center padding-5 bg-error'>
+        <p className='text-error'>{errorMessage ? errorMessage : `Please provide a ${error}`}</p>
     </div>
   )
-}
+})
+
 
 export default Error1
