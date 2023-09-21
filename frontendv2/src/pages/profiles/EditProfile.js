@@ -17,8 +17,6 @@ const EditProfile = React.memo(() => {
     const [verificationInfo, setVerificationInfo] = useState(() => null)
     const {verificationDetail} = verificationUrls
 
-    CountRenders('edit profile page: ')
-
     const getVerificationStatusInfo = async () => {
         const fetchConfig = {method : 'GET'}
         const {response, data} = await CustomFetch(`${verificationDetail.url}/${UserProfile.id}/`, 

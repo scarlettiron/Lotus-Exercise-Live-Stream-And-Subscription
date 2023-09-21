@@ -130,6 +130,8 @@ export const AuthProvider = React.memo(({children}) => {
 
     const handleSetUserProfile = (data) => {
         setUserProfile(data)
+        localStorage.removeItem('UserProfile')
+        localStorage.setItem('UserProfile', JSON.stringify(data))
     }
 
     const resetPassword = async (email) => {

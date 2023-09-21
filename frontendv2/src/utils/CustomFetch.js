@@ -2,7 +2,6 @@ import dayjs from 'dayjs'
 import GetCookie from './GetCookie'
 import jwt_decode from 'jwt-decode'
 import {loginRefreshUrl} from './BaseInfo'
-import { response } from 'express'
 
 
 const updateToken = async (AuthTokens) => {
@@ -86,8 +85,10 @@ const CustomFetchLegWork = async (dataUrl, fetchConfig={}, contentTypeOverRide=f
     return {response, data}
 }
 const CustomFetch = async (dataUrl, fetchConfig={}, contentTypeOverRide=false) => {
+    const fetch = fetchConfig
+    const override = contentTypeOverRide
     try{
-        const {response, data} = await CustomFetchLegWork(dataUrl, fetchConfig={}, contentTypeOverRide=false)
+        const {response, data} = await CustomFetchLegWork(dataUrl, fetchConfig=fetch, contentTypeOverRide=override)
         return {response, data}
     }
     catch{

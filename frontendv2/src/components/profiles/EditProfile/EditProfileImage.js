@@ -25,12 +25,12 @@ const EditProfileImage = () => {
         const filePath = URL.createObjectURL(file)
 
         const payload = new FormData()
-        payload.append('pic', file)
+        payload.append('pic', e.target.files[0])
 
-        const fetchConfig = {method:'PUT', body:payload}
+        const fetchConfig = {method:'PUT', 'body':payload}
         const {response, data} = await CustomFetch(`${userProfileUrl}${UserProfile.username}/`, 
                                                     fetchConfig, true)
-        if(response.status === 200){
+                                                    if(response.status === 200){
             handleSetUserProfile(data)
             setProfilePic(() => filePath)
         }
