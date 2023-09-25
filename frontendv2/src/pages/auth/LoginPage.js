@@ -2,7 +2,6 @@ import React, {useState, useContext, useEffect} from 'react'
 import AuthContext from '../../context/AuthContext'
 import { useHistory } from 'react-router-dom'
 import Error3 from '../../components/errors-success/Error3'
-import SideBar from '../../components/navbars/SideBar'
 import Button6 from '../../components/buttons-inputs/Button6'
 import LoadingSpinnerForm from '../../components/loaders/LoadingSpinnerForm'
 import DevBtn from '../../components/Developers/DevBtn'
@@ -54,10 +53,6 @@ const LoginForm = () => {
   }, [])
 
   return (
-    <div className='main-container'>
-      <div className='main-wrapper'>
-      <SideBar/>
-      <div className='display-inline margin-0 padding-0'>
         <form className='login-container margin-30' onSubmit={handleLogin} id='login-form'>
         {dev &&
               <DevLoginPopup closePopup={toggleDevPopup}/>
@@ -83,9 +78,6 @@ const LoginForm = () => {
               <LoadingSpinnerForm/>
             }
         </form>
-      </div>
-      </div>
-    </div>
   )
 }
 

@@ -1,7 +1,6 @@
 import React, {useState, useRef, useEffect, useCallback} from 'react'
 import CustomFetch from '../../utils/CustomFetch'
 import { transactionsUrls } from '../../utils/BaseInfo'
-import SideBar from '../../components/navbars/SideBar'
 import LoadingSpinner from '../../components/general/LoadingSpinner'
 import TransactionItem from '../../components/transactions/TransactionItem'
 import Button5 from '../../components/general/Button5'
@@ -80,53 +79,46 @@ const Transactions = React.memo(() => {
     }, [handleGetTransactions])
 
   return (
-    <div className='main-container'>
-        <div className='main-wrapper'>
-        <div className='display-inline'>
-                    <SideBar/>
-                </div>
-                <div className='container'>
-                    <GeneralHeader text='Transactions' />
-                    {loading && <LoadingSpinner/>}
+    <div className='container'>
+        <GeneralHeader text='Transactions' />
+        {loading && <LoadingSpinner/>}
 
-                    <div className='justify-content-space-around padding-20'>
-                        <Button5 
-                        text={'All'} 
-                        action={viewAll} 
-                        btnClass={all ? 'active' : null}
-                        />
-                        <Button5 
-                        text={'Purchases'} 
-                        action={viewPurchases} 
-                        btnClass={purchases ? 'active' : null}
-                        />
-                        <Button5 
-                        text={'Payments'} 
-                        action={viewPayments} 
-                        btnClass={payments ? 'active' : null}
-                        />
-                    </div>
-                    <div className='t-items-container'>
-                        {transactions && transactions.count > 0 &&
-                            transactions.results.map((t, index, tArray) => {
-                                if (index + 1 === transactions.results.length && transactions.next){
-                                    return <>
-                                        {all && <TransactionItem key={index} transaction={t}/>}
-                                        {payments && t.is_payment && <TransactionItem key={index} transaction={t}/>}
-                                        {purchases && t.is_purchase && <TransactionItem key={index} transaction={t}/>}
-                                        <div ref={handleTrackPosition}></div>
-                                        </>
-                                }
-                                return <>
-                                    {all && <TransactionItem key={index} transaction={t}/>}
-                                    {payments && t.is_payment && <TransactionItem key={index} transaction={t}/>}
-                                    {purchases && t.is_purchase && <TransactionItem key={index} transaction={t}/>}
-                                    </>
-                            })
-                        }
-                    </div> 
-                </div>
+        <div className='justify-content-space-around padding-20'>
+            <Button5 
+            text={'All'} 
+            action={viewAll} 
+            btnClass={all ? 'active' : null}
+            />
+            <Button5 
+            text={'Purchases'} 
+            action={viewPurchases} 
+            btnClass={purchases ? 'active' : null}
+            />
+            <Button5 
+            text={'Payments'} 
+            action={viewPayments} 
+            btnClass={payments ? 'active' : null}
+            />
         </div>
+        <div className='t-items-container'>
+            {transactions && transactions.count > 0 &&
+                transactions.results.map((t, index, tArray) => {
+                    if (index + 1 === transactions.results.length && transactions.next){
+                        return <>
+                            {all && <TransactionItem key={index} transaction={t}/>}
+                            {payments && t.is_payment && <TransactionItem key={index} transaction={t}/>}
+                            {purchases && t.is_purchase && <TransactionItem key={index} transaction={t}/>}
+                            <div ref={handleTrackPosition}></div>
+                            </>
+                    }
+                    return <>
+                        {all && <TransactionItem key={index} transaction={t}/>}
+                        {payments && t.is_payment && <TransactionItem key={index} transaction={t}/>}
+                        {purchases && t.is_purchase && <TransactionItem key={index} transaction={t}/>}
+                        </>
+                })
+            }
+        </div> 
     </div>
   )
 })

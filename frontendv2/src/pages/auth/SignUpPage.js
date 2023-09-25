@@ -2,7 +2,6 @@ import React, {useState} from 'react'
 import {createUserUrl} from '../../utils/BaseInfo'
 import { useHistory } from 'react-router-dom'
 import Error3 from '../../components/errors-success/Error3'
-import SideBar from '../../components/navbars/SideBar'
 import Button6 from '../../components/buttons-inputs/Button6'
 import Input1 from '../../components/buttons-inputs/Input1'
 import LoadingSpinnerForm from '../../components/loaders/LoadingSpinnerForm'
@@ -55,11 +54,6 @@ const SignUpForm = () => {
 
 
   return (
-    <div className='main-container'>
-    <div className='main-wrapper'>
-      <SideBar/>
-    <div className='display-inline margin-0 padding-0'>
-      
       <form className='login-container temp margin-30' onSubmit={handleSignup} id='signup-form'>
         <div className='w-100 justify-content-center'>
           <h2 className='padding-0 margin-0 text-white'>Signup</h2>
@@ -83,10 +77,6 @@ const SignUpForm = () => {
           <LoadingSpinnerForm/>
         }
       </form>
-      
-    </div>
-    </div>
-  </div>
   )
 }
 

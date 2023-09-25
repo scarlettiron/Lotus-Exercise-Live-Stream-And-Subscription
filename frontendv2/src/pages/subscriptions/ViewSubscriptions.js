@@ -1,6 +1,5 @@
 import React, {useEffect, useState, useCallback} from 'react'
 import CustomFetch from '../../utils/CustomFetch'
-import SideBar from '../../components/navbars/SideBar'
 import LoadingSpinner from '../../components/general/LoadingSpinner'
 import { subscriptionUrls } from '../../utils/BaseInfo'
 import ActiveSubscriptions from '../../components/subscriptions/ActiveSubscriptions'
@@ -39,43 +38,34 @@ const ViewSubscriptions = () => {
     }, [])
 
   return (
-    <div className='main-container'>
-        <div className='main-wrapper'>
-        <div className='display-inline'>
-                    <SideBar/>
+        <div className='container'>
+            {loading && <LoadingSpinner/>}
+
+            {!loading &&
+            <>
+                <div className='w-100 margin-20 justify-content-space-around'>
+                    <Button5 text='Active' action={() => setViewActive(() => true)} btnClass={viewActive ? 'active' : null}/>
+                    <Button5 text='Inactive' action={() => setViewActive(() => false)} btnClass={!viewActive ? 'active' : null}/>
+
                 </div>
-            <div className='display-inline'>
-                    <div className='container'>
-                        {loading && <LoadingSpinner/>}
+            </>
+            
+            }
 
-                        {!loading &&
-                        <>
-                            <div className='w-100 margin-20 justify-content-space-around'>
-                                <Button5 text='Active' action={() => setViewActive(() => true)} btnClass={viewActive ? 'active' : null}/>
-                                <Button5 text='Inactive' action={() => setViewActive(() => false)} btnClass={!viewActive ? 'active' : null}/>
+            {subscriptions && subscriptions.count > 0 && viewActive &&
+                <ActiveSubscriptions 
+                subscriptions={subscriptions}
+                handlePaginateSubscriptions={handlePaginateSubscriptions}
+                />
+            }
+            {subscriptions && subscriptions.count > 0 && !viewActive &&
+                <InactiveSubscriptins 
+                subscriptions={subscriptions} 
+                handlePaginateSubscriptions={handlePaginateSubscriptions}
+                />
+            }
 
-                            </div>
-                        </>
-                        
-                        }
-
-                        {subscriptions && subscriptions.count > 0 && viewActive &&
-                            <ActiveSubscriptions 
-                            subscriptions={subscriptions}
-                            handlePaginateSubscriptions={handlePaginateSubscriptions}
-                            />
-                        }
-                        {subscriptions && subscriptions.count > 0 && !viewActive &&
-                            <InactiveSubscriptins 
-                            subscriptions={subscriptions} 
-                            handlePaginateSubscriptions={handlePaginateSubscriptions}
-                            />
-                        }
-
-                    </div>
-            </div>
         </div>
-    </div>
     )
 }
 

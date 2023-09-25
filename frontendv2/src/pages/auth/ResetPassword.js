@@ -3,7 +3,6 @@ import AuthContext from '../../context/AuthContext'
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 import Error3 from '../../components/errors-success/Error3'
 import Input1 from '../../components/buttons-inputs/Input1'
-import SideBar from '../../components/navbars/SideBar'
 import Button6 from '../../components/buttons-inputs/Button6'
 import '../../css/login-signup.css'
 import '../../css/general.css'
@@ -42,12 +41,7 @@ const ResetPassword = () => {
   }
 
   return (
-    <div className='main-container'>
-      <div className='main-wrapper'>
-      <SideBar/>
-      <div className='display-inline margin-0 padding-0'>
-        
-        <form className='login-container temp margin-30' onSubmit={handlePasswordResetRequest} id='reset-password-form'>
+      <form className='login-container temp margin-30' onSubmit={handlePasswordResetRequest} id='reset-password-form'>
           <div className='w-100 justify-content-center'>
             <h2 className='padding-0 margin-0 text-white'>Request Password Reset</h2>
           </div>
@@ -71,10 +65,6 @@ const ResetPassword = () => {
               </div>
             }
         </form>
-        
-      </div>
-      </div>
-    </div>
   )
 }
 

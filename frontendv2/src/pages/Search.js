@@ -1,6 +1,5 @@
 import React, {useState, useEffect, useCallback, useRef} from 'react'
 import SearchBar from '../components/search/SearchBar'
-import SideBar from '../components/navbars/SideBar'
 import { useParams} from 'react-router-dom'
 import CustomFetch from '../utils/CustomFetch'
 import { searchUsersUrl, postSearchUrl} from '../utils/BaseInfo'
@@ -123,41 +122,34 @@ const handleTrackPosition = element => {
 
 
   return (
-    <div className='main-container'>
-        <div className='main-wrapper'>
         <div className='display-inline'>
-                    <SideBar/>
+            <div className='container'>
+              <SearchBar inputOnChange={handleSetSearch} btnAction={searchType} placeholder='Search users and posts'/>
+              <div className='justify-content-space-around'>
+                <div className='display-inline'>
+                  <Button5 text={'Users'}  action={handleSearchUsers} />
                 </div>
-            <div className='display-inline'>
-                <div className='container'>
-                  <SearchBar inputOnChange={handleSetSearch} btnAction={searchType} placeholder='Search users and posts'/>
-                  <div className='justify-content-space-around'>
-                    <div className='display-inline'>
-                      <Button5 text={'Users'}  action={handleSearchUsers} />
-                    </div>
-                    <div className='display-inline'>
-                      <Button5 text={'Posts'} action={handleSearchPosts} />
-                    </div>
-                  </div>
+                <div className='display-inline'>
+                  <Button5 text={'Posts'} action={handleSearchPosts} />
                 </div>
-                <div className='container'>
-                  {loading && <LoadingSpinner/>}
-                  {viewUsers && searchUsersResuslts &&
-                    searchUsersResuslts.results.map((user, index) => 
-                    {return <UserListItem key={index} user={user} />})
-                  }
-                  {!loading && searchUsersResuslts && viewUsers &&
-                    <div ref={handleTrackPosition}></div>
-                  }
-                  {searchPostsResults &&  
-                    <PostWrap posts={searchPostsResults} 
-                    handlePaginatePosts={handlePaginatePosts}
-                    /> 
-                  }
-                </div>
+              </div>
+            </div>
+            <div className='container'>
+              {loading && <LoadingSpinner/>}
+              {viewUsers && searchUsersResuslts &&
+                searchUsersResuslts.results.map((user, index) => 
+                {return <UserListItem key={index} user={user} />})
+              }
+              {!loading && searchUsersResuslts && viewUsers &&
+                <div ref={handleTrackPosition}></div>
+              }
+              {searchPostsResults &&  
+                <PostWrap posts={searchPostsResults} 
+                handlePaginatePosts={handlePaginatePosts}
+                /> 
+              }
             </div>
         </div>
-    </div>
   )
 }
 

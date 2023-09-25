@@ -2,7 +2,6 @@ import React, {useContext, useState} from 'react'
 import AuthContext from '../../context/AuthContext'
 import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min'
 import Error3 from '../../components/errors-success/Error3'
-import SideBar from '../../components/navbars/SideBar'
 import Button6 from '../../components/buttons-inputs/Button6'
 import LoadingSpinnerForm from '../../components/loaders/LoadingSpinnerForm'
 import '../../css/login-signup.css'
@@ -44,11 +43,6 @@ const ResetPasswordConfirm = () => {
     }
 
   return (
-    <div className='main-container'>
-      <div className='main-wrapper'>
-      <SideBar/>
-      <div className='display-inline margin-0 padding-0'>
-        
         <form className='login-container temp margin-30' onSubmit={handleConfirmPasswordReset} id='confirm-reset-password-form'>
           <div className='w-100 justify-content-center'>
             <h2 className='padding-0 margin-0 text-white'>Reset Password</h2>
@@ -69,10 +63,6 @@ const ResetPasswordConfirm = () => {
               <LoadingSpinnerForm/>
             }
         </form>
-        
-      </div>
-      </div>
-    </div>
   )
 }
 

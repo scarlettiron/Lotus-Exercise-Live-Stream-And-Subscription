@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import AuthContext from '../../context/AuthContext'
 import { useParams } from 'react-router-dom'
 import CustomFetch from '../../utils/CustomFetch'
-import SideBar from '../../components/navbars/SideBar'
 import { postDetailUpdateDelete } from '../../utils/BaseInfo'
 import Button1 from '../../components/general/Button1'
 import { useHistory } from 'react-router-dom'
@@ -41,32 +40,21 @@ const EditPost = () => {
 
 
   return (
-    <div>        
-        <div className='main-container'>
-            <div className='main-wrapper'>
-            <div className='display-inline'>
-                    <SideBar/>
+        <div className='container'>
+            <div className='post-container'>
+                <div className='justify-content-between padding-10'>
+                    <Link to={`/user/${UserProfile.username}`}>
+                        <Button1 text={'Cancel'} action={() => history.goBack()}/>
+                    </Link>
+                    <Button1 action={handleUpdatePost} text={<span className='margin-10'>Save</span>} />
                 </div>
-                <div className='display-inline'>
-                    <div className='container'>
-                        <div className='post-container'>
-                            <div className='justify-content-between padding-10'>
-                                <Link to={`/user/${UserProfile.username}`}>
-                                    <Button1 text={'Cancel'} action={() => history.goBack()}/>
-                                </Link>
-                                <Button1 action={handleUpdatePost} text={<span className='margin-10'>Save</span>} />
-                            </div>
-                            <div className='post-text-wrapper'>
-                                <textarea onChange={(e) => setPostBody(e.target.value)} value={postBody} className='post-edit-textarea'>
+                <div className='post-text-wrapper'>
+                    <textarea onChange={(e) => setPostBody(e.target.value)} value={postBody} className='post-edit-textarea'>
 
-                                </textarea>
-                            </div>
-                        </div>
-                    </div>
+                    </textarea>
                 </div>
             </div>
         </div>
-    </div>
   )
 }
 

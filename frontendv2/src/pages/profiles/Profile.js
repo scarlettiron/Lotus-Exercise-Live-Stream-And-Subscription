@@ -81,40 +81,32 @@ const Profile = React.memo(() => {
     },[username])
 
     return (
-        <div className='main-container'>
-            <div className='main-wrapper'>
-                <div className='display-inline'>
-                    <SideBar/>
-                </div>
             
-            <div className='display-inline'>
+        <div className='display-inline'>
+            <div className='container'>
+                {user && <>
+                <ProfileHeader2 user={user} />
+                <Divider1 />
                 <div className='container'>
-                    {user && <>
-                    <ProfileHeader2 user={user} />
-                    <Divider1 />
-                    <div className='container'>
-                        <div className='secondary-wrapper'>
-                            <About user={user}/>
-                            <LiveSection />
-                        </div>
+                    <div className='secondary-wrapper'>
+                        <About user={user}/>
+                        <LiveSection />
                     </div>
-                    </>
-                    }
-                    <Divider1 />
                 </div>
-                {loadingPosts && <LoadingSpinner/>}
-                {posts && posts.count > 0 &&
-                    <PostWrap 
-                    user={user} 
-                    posts={posts} 
-                    handlePaginatePosts={handlePaginatePosts}
-                    handleSetHasPurchased={handleSetHasPurchased}
-                    />
-                }                        
+                </>
+                }
+                <Divider1 />
             </div>
-            </div> 
-        </div>
-
+            {loadingPosts && <LoadingSpinner/>}
+            {posts && posts.count > 0 &&
+                <PostWrap 
+                user={user} 
+                posts={posts} 
+                handlePaginatePosts={handlePaginatePosts}
+                handleSetHasPurchased={handleSetHasPurchased}
+                />
+            }                        
+        </div> 
     )
 })
 

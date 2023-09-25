@@ -8,7 +8,7 @@ import SideBar from '../../components/navbars/SideBar'
 import ThreadContainer from '../../components/chat/ThreadContainer'
 import MessageContainer from '../../components/chat/MessageContainer'
 import VideoCallContainer from '../../components/chat/VideoCallContainer'
-
+import '../../css/general.css'
 
 const Chat = React.memo(() => {
     /// socket and peer context ///
@@ -101,7 +101,7 @@ const Chat = React.memo(() => {
 
 
   return (
-    <div className='main-container'>
+    <div className='main-container margin-auto'>
         <div className='main-wrapper'>
                     <SideBar chat={true}/>
             <div className='display-inline'>

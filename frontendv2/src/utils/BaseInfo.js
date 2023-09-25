@@ -1,12 +1,12 @@
 //API ENDPOINTS
 const isDevLocal = false
 
-const baseApiUrl = isDevLocal ? process.env.REACT_APP_SERVER_NAME_LOCAL : process.env.REACT_APP_SERVER_NAME
-
-const siteUrl = isDevLocal ? process.env.REACT_APP_SERVER_NAME_LOCAL : process.env.REACT_APP_SITE_URL
-
-const serverUrl = isDevLocal ? process.env.REACT_APP_SERVER_URL_LOCAL : process.env.REACT_APP_SERVER_URL
-
+// baseApiUrl = isDevLocal ? process.env.REACT_APP_SERVER_NAME_LOCAL : process.env.REACT_APP_SERVER_NAME
+const baseApiUrl = 'https://yoga-testing.up.railway.app/api/'
+//const siteUrl = isDevLocal ? process.env.REACT_APP_SERVER_NAME_LOCAL : process.env.REACT_APP_SITE_URL
+const siteUrl = 'https://yoga-testing.up.railway.app/api/'
+//const serverUrl = isDevLocal ? process.env.REACT_APP_SERVER_URL_LOCAL : process.env.REACT_APP_SERVER_URL
+const serverUrl = 'yoga-testing.up.railway.app'
                     //socket URLS
 
 const socketUrls = {

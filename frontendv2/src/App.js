@@ -1,4 +1,6 @@
 import './App.css'
+import './css/general.css'
+import SideBar from './components/navbars/SideBar';
 import { BrowserRouter as Router, Route} from 'react-router-dom';
 import {AuthProvider} from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
@@ -30,37 +32,44 @@ import Purchases from './pages/purchases/Purchases';
 function App() {
   return (
     <div className="App">
-      <Router>
-      <ThemeProvider>
-      <AuthProvider>
-          <Route exact component={LoginPage} path = '/'></Route>
-          <Route component={LoginPage} path='/login'></Route>
-          <Route component={SignUpPage} path='/signup'></Route>
-          <PrivateRoute component={EditPost} path='/post/edit/:postid' exact/>
-          <PrivateRoute component={CreatePost} path='/new-post/create' exact/>
-          <Route component={ViewPost} path='/post/:postid' exact></Route>
-          <Route component={Profile} path='/user/:username'></Route>
-          <PrivateRoute component={Profile} path='/home'/>
-          <PrivateRoute component={EditProfile} path='/profile/edit'/>
-          <Route component={Feed} path='/feed'></Route>
-          <Route component={Search} path='/search/:Q'></Route>
-          <PrivateRoute component={Appointments} path='/calendar'/>
-          <PrivateRoute component={Transactions} path='/transactions'/>
-          <PrivateRoute component={Inbox} path='/inbox'/>
-          <PrivateSocketProvider>
-            <PrivateRoute component={Chat} path='/chat/:threadid'/>
-          </PrivateSocketProvider>
-          <PrivateRoute component={CreateClass} path='/class/create'/>
-          <PublicClassSocketProvider>
-            <PrivateRoute component={AttendClass} path='/attend/class/:threadid'/>
-          </PublicClassSocketProvider>
-          <PrivateRoute component={ViewSubscriptions} path='/subscriptions'/>
-          <PrivateRoute component={Purchases} path='/purchases'/>
-          <Route exact component={ResetPassword} path='/password/reset'></Route>
-          <Route exact component={ResetPasswordConfirm} path='/password/reset/confirm/:uid/:token'></Route>
-      </AuthProvider>
-      </ThemeProvider>
-      </Router>
+        <Router>
+        <ThemeProvider>
+        <AuthProvider>
+        <PrivateRoute component={Inbox} path='/inbox'/>
+        <PrivateSocketProvider>
+          <PrivateRoute component={Chat} path='/chat/:threadid'/>
+        </PrivateSocketProvider>
+        <div className='main-container'>
+          <div className='main-wrapper'>
+            <SideBar/>
+          <div className='display-inline margin-0 padding-0'>
+            <Route exact component={LoginPage} path = '/'></Route>
+            <Route component={LoginPage} path='/login'></Route>
+            <Route component={SignUpPage} path='/signup'></Route>
+            <PrivateRoute component={EditPost} path='/post/edit/:postid' exact/>
+            <PrivateRoute component={CreatePost} path='/new-post/create' exact/>
+            <Route component={ViewPost} path='/post/:postid' exact></Route>
+            <Route component={Profile} path='/user/:username'></Route>
+            <PrivateRoute component={Profile} path='/home'/>
+            <PrivateRoute component={EditProfile} path='/profile/edit'/>
+            <Route component={Feed} path='/feed'></Route>
+            <Route component={Search} path='/search/:Q'></Route>
+            <PrivateRoute component={Appointments} path='/calendar'/>
+            <PrivateRoute component={Transactions} path='/transactions'/>
+            <PrivateRoute component={CreateClass} path='/class/create'/>
+            <PublicClassSocketProvider>
+              <PrivateRoute component={AttendClass} path='/attend/class/:threadid'/>
+            </PublicClassSocketProvider>
+            <PrivateRoute component={ViewSubscriptions} path='/subscriptions'/>
+            <PrivateRoute component={Purchases} path='/purchases'/>
+            <Route exact component={ResetPassword} path='/password/reset'></Route>
+            <Route exact component={ResetPasswordConfirm} path='/password/reset/confirm/:uid/:token'></Route>
+            </div>
+        </div>
+        </div>
+        </AuthProvider>
+        </ThemeProvider>
+        </Router>
     </div>
   );
 }

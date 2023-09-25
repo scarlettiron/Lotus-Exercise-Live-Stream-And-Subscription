@@ -3,7 +3,6 @@ import AuthContext from '../../context/AuthContext'
 import CustomFetch from '../../utils/CustomFetch'
 import LoadingSpinner from '../../components/general/LoadingSpinner'
 import { bookingUrls } from '../../utils/BaseInfo'
-import SideBar from '../../components/navbars/SideBar'
 import GeneralHeader from '../../components/general/headers/GeneralHeader'
 import AppointmentItem from '../../components/appointments/AppointmentItem'
 import Button5 from '../../components/general/Button5'
@@ -81,58 +80,51 @@ const Appointments = () => {
     }, [handleGetUserAppointments])
 
   return (
-    <div className='main-container'>
-        <div className='main-wrapper'>
-        <div className='display-inline'>
-                    <SideBar/>
-                </div>
-                <div className='container'>
-                    <GeneralHeader text='Calendar' />
-                    <div className='justify-content-space-around padding-20'>
-                        <div className='display-inline'>
-                            <Button5 
-                            text={'All'}  
-                            action={viewAll} 
-                            btnClass={all ? 'active' : null}
-                            />
-                        </div>
-                        <div className='display-inline'>
-                            <Button5 
-                            text={'Taking'}
-                            action={viewTaking}
-                            btnClass={taking ? 'active' : null}
-                            />
-                        </div>
-                        <div className='display-inline'>
-                            <Button5 
-                            text={'Teaching'}  
-                            action={viewTeaching} 
-                            btnClass={teaching ? 'active' : null}
-                            />
-                        </div>
-                    </div>
-                {loading && <LoadingSpinner />}
-
-                {appointments && appointments.count > 0 &&
-                    appointments.results.map((app, index) => {
-                        if (index + 1 === appointments.results.length && appointments.next){
-                            return <React.Fragment key={index}>
-                                {all && <AppointmentItem  appointment={app}/>}
-                                {taking && !app.is_instructor && <AppointmentItem appointment={app}/>}
-                                {teaching && app.is_instructor && <AppointmentItem appointment={app}/>}
-                                <div ref={handleTrackPosition}></div>
-                                </React.Fragment>
-                        }
-                        return <React.Fragment key={index}>
-                            {all && <AppointmentItem appointment={app}/>}
-                            {taking && !app.is_instructor && <AppointmentItem appointment={app}/>}
-                            {teaching && app.is_instructor && <AppointmentItem appointment={app}/>}
-                            </React.Fragment>
-                    })
-                }
-
-                </div>
+    <div className='container'>
+        <GeneralHeader text='Calendar' />
+        <div className='justify-content-space-around padding-20'>
+            <div className='display-inline'>
+                <Button5 
+                text={'All'}  
+                action={viewAll} 
+                btnClass={all ? 'active' : null}
+                />
             </div>
+            <div className='display-inline'>
+                <Button5 
+                text={'Taking'}
+                action={viewTaking}
+                btnClass={taking ? 'active' : null}
+                />
+            </div>
+            <div className='display-inline'>
+                <Button5 
+                text={'Teaching'}  
+                action={viewTeaching} 
+                btnClass={teaching ? 'active' : null}
+                />
+            </div>
+        </div>
+    {loading && <LoadingSpinner />}
+
+    {appointments && appointments.count > 0 &&
+        appointments.results.map((app, index) => {
+            if (index + 1 === appointments.results.length && appointments.next){
+                return <React.Fragment key={index}>
+                    {all && <AppointmentItem  appointment={app}/>}
+                    {taking && !app.is_instructor && <AppointmentItem appointment={app}/>}
+                    {teaching && app.is_instructor && <AppointmentItem appointment={app}/>}
+                    <div ref={handleTrackPosition}></div>
+                    </React.Fragment>
+            }
+            return <React.Fragment key={index}>
+                {all && <AppointmentItem appointment={app}/>}
+                {taking && !app.is_instructor && <AppointmentItem appointment={app}/>}
+                {teaching && app.is_instructor && <AppointmentItem appointment={app}/>}
+                </React.Fragment>
+        })
+    }
+
     </div>
   )
 }

@@ -54,26 +54,16 @@ const Feed = React.memo(() => {
     }, [])
 
   return (
-    <div className='main-container'>
-        <div className='main-wrapper'>
-            <div className='display-inline'>
-                <SideBar/>
-            </div>
-            
-            <div className='display-inline'>
-                <div className='container'>
-                    <FeedHeader />
-                    {loading && <LoadingSpinner/>}
-                    {posts  &&
-                        <PostWrap 
-                        posts={posts} 
-                        handlePaginatePosts={handlePaginatePosts}
-                        />
-                    }
-                </div>
-            </div>
+        <div className='container'>
+            <FeedHeader />
+            {loading && <LoadingSpinner/>}
+            {posts  &&
+                <PostWrap 
+                posts={posts} 
+                handlePaginatePosts={handlePaginatePosts}
+                />
+            }
         </div>
-    </div>
   )
 })
 

@@ -1,5 +1,4 @@
 import React, {useState, useRef} from 'react'
-import SideBar from '../../components/navbars/SideBar'
 import Button5 from '../../components/general/Button5'
 import ViewSubscriptions from '../../components/subscriptions/ViewSubscriptions'
 import ViewPurchasedPosts from '../../components/purchases/ViewPurchasedPosts'
@@ -33,31 +32,23 @@ const Purchases = () => {
 
 
   return (
-    <div className='main-container'>
-        <div className='main-wrapper'>
-        <div className='display-inline'>
-                    <SideBar/>
-                </div>
-                <div className='container'>
-                    <GeneralHeader text='Purchases' />
-                    <div className='w-100 justify-content-space-around'>
-                        <Button5 text='Posts' btnClass={viewPosts ? 'active' : null} action={handleSetViewPosts}/>
-                        <Button5 text='Subscriptions' btnClass={viewSubscriptions ? 'active' : null} action={handleSetViewSubscriptions}/>
-                    </div>
-                    <div className='container'>
-                        {viewSubscriptions && !viewPosts &&
-                            <ViewSubscriptions/>
-                        }
-
-                        {viewPosts && !viewSubscriptions &&
-                            <ViewPurchasedPosts/>
-                        }
-
-                    </div>
-                </div>
+    <div className='container'>
+        <GeneralHeader text='Purchases' />
+        <div className='w-100 justify-content-space-around'>
+            <Button5 text='Posts' btnClass={viewPosts ? 'active' : null} action={handleSetViewPosts}/>
+            <Button5 text='Subscriptions' btnClass={viewSubscriptions ? 'active' : null} action={handleSetViewSubscriptions}/>
         </div>
-    </div>
-                
+        <div className='container'>
+            {viewSubscriptions && !viewPosts &&
+                <ViewSubscriptions/>
+            }
+
+            {viewPosts && !viewSubscriptions &&
+                <ViewPurchasedPosts/>
+            }
+
+        </div>
+    </div>     
   )
 }
 

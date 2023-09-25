@@ -103,114 +103,107 @@ const CreateClass = () => {
     }
 
   return (
-    <div className='main-container'>
-        <div className='main-wrapper'>
-            <SideBar/>
-            <div className='display-inline'>
-                <div className='container'>
-                {loading && <LoadingSpinner btnAction={abort}/>}
-                {success && <SuccessPopup/>}
-                    <div className='justify-content-center w-100 padding-20'>
-                        <h1 className='title-primary-text'>CREATE CLASS</h1>
-                    </div>
-                    <div className='justify-content-between w-100'>
-                        <ResponsiveBtn 
-                        btnWrapper={'display-inline margin-20'} 
-                        text={'Cancel'} 
-                        btnClass={'theme-secondary'} 
-                        action={handleCancel}
-                        />
-                        
-                        <ResponsiveBtn 
-                        btnWrapper={'display-inline margin-20'} 
-                        text={'Create'} 
-                        btnClass={'theme-primary'}
-                        for={'create-class-form'}
-                        type='submit'
-                        form='create-class-form'
-                        />
-                    </div>
-                    {error && <ErrorBanner error={error}/>}
-                    <form ref={formRef} id='create-class-form' name='create-class-form' className='w-100' onSubmit={(e)=>handleCreateClass(e)} method='POST'> 
-                        <ResizingTextArea 
-                        wrapperClass={'post-input-wrapper temp'} 
-                        name='Title'
-                        id='title' 
-                        placeholder='Add a title (100 characters)' 
-                        max_length={100}
-                        />
-
-                        <ResizingTextArea 
-                        wrapperClass={'post-input-wrapper temp'} 
-                        name='Description'
-                        placeholder='Add a description (2000 characters)'
-                        id='description'
-                        max_length={2000}
-                        />
-
-                        <div className='justify-content-center margin-20'>
-                            <p className='text-paragraph'>Select between what hours the class will be available</p>
-                        </div>
-                        <div className='justify-content-center'>
-                            <div className='display-inline w-50'>
-                                <TimeSelect
-                                id='from_time'
-                                label='From'
-                                />
-                            </div>
-                            <div className='display-inline w-50 margin-20'>
-                            <TimeSelect
-                                id='to_time'
-                                label='To'
-                                />
-                            </div>
-                        </div>
-                        <div className='w-100 justify-content-center margin-20'>
-                            <p className='text-paragraph'> Choose the days this class is available</p>
-                        </div>
-                        <div className='multiple-choice'>
-                            {days()}
-                        </div>
-                        <div className='w-100 justify-content-center margin-20'>
-                            <p className='text-paragraph'> How long will this class be?</p>
-                        </div>
-                        <div className='w-100 justify-content-center flex-wrap margin-20'>
-                            <div className='margin-20'>
-                                <div className='display-inline'>
-                                    <p className='text-paragraph'>Hours</p>
-                                </div>
-                                <input type='number' id='hours' name='hours'  className='price-input'/>
-                            </div>
-                            <div className='margin-20'>
-                                <div className='display-inline'>
-                                    <p className='text-paragraph'>Minutes</p>
-                                </div>
-                                <input type='number' id='minutes' name='minutes'  className='price-input'/>
-                            </div>
-                        </div>
-                        <div className='post-price-wrapper margin-20'>
-                            <div className='display-inline'>
-                                <p className='text-paragraph'>Add a price</p>
-                            </div>
-                            <div className='display-inline'>
-                                <CurrencyInput
-                                id="classprice"
-                                name="Class price"
-                                placeholder="Enter a price (optional)"
-                                decimalsLimit={2}
-                                defaultValue={0}
-                                maxLength={5}
-                                onValueChange={(value, name)=>{}}
-                                prefix={'$'}
-                                className={'price-input'}
-                                />
-                            </div>
-                        </div>
-                    </form>
-                </div>
+        <div className='container'>
+        {loading && <LoadingSpinner btnAction={abort}/>}
+        {success && <SuccessPopup/>}
+            <div className='justify-content-center w-100 padding-20'>
+                <h1 className='title-primary-text'>CREATE CLASS</h1>
             </div>
+            <div className='justify-content-between w-100'>
+                <ResponsiveBtn 
+                btnWrapper={'display-inline margin-20'} 
+                text={'Cancel'} 
+                btnClass={'theme-secondary'} 
+                action={handleCancel}
+                />
+                
+                <ResponsiveBtn 
+                btnWrapper={'display-inline margin-20'} 
+                text={'Create'} 
+                btnClass={'theme-primary'}
+                for={'create-class-form'}
+                type='submit'
+                form='create-class-form'
+                />
+            </div>
+            {error && <ErrorBanner error={error}/>}
+            <form ref={formRef} id='create-class-form' name='create-class-form' className='w-100' onSubmit={(e)=>handleCreateClass(e)} method='POST'> 
+                <ResizingTextArea 
+                wrapperClass={'post-input-wrapper temp'} 
+                name='Title'
+                id='title' 
+                placeholder='Add a title (100 characters)' 
+                max_length={100}
+                />
+
+                <ResizingTextArea 
+                wrapperClass={'post-input-wrapper temp'} 
+                name='Description'
+                placeholder='Add a description (2000 characters)'
+                id='description'
+                max_length={2000}
+                />
+
+                <div className='justify-content-center margin-20'>
+                    <p className='text-paragraph'>Select between what hours the class will be available</p>
+                </div>
+                <div className='justify-content-center'>
+                    <div className='display-inline w-50'>
+                        <TimeSelect
+                        id='from_time'
+                        label='From'
+                        />
+                    </div>
+                    <div className='display-inline w-50 margin-20'>
+                    <TimeSelect
+                        id='to_time'
+                        label='To'
+                        />
+                    </div>
+                </div>
+                <div className='w-100 justify-content-center margin-20'>
+                    <p className='text-paragraph'> Choose the days this class is available</p>
+                </div>
+                <div className='multiple-choice'>
+                    {days()}
+                </div>
+                <div className='w-100 justify-content-center margin-20'>
+                    <p className='text-paragraph'> How long will this class be?</p>
+                </div>
+                <div className='w-100 justify-content-center flex-wrap margin-20'>
+                    <div className='margin-20'>
+                        <div className='display-inline'>
+                            <p className='text-paragraph'>Hours</p>
+                        </div>
+                        <input type='number' id='hours' name='hours'  className='price-input'/>
+                    </div>
+                    <div className='margin-20'>
+                        <div className='display-inline'>
+                            <p className='text-paragraph'>Minutes</p>
+                        </div>
+                        <input type='number' id='minutes' name='minutes'  className='price-input'/>
+                    </div>
+                </div>
+                <div className='post-price-wrapper margin-20'>
+                    <div className='display-inline'>
+                        <p className='text-paragraph'>Add a price</p>
+                    </div>
+                    <div className='display-inline'>
+                        <CurrencyInput
+                        id="classprice"
+                        name="Class price"
+                        placeholder="Enter a price (optional)"
+                        decimalsLimit={2}
+                        defaultValue={0}
+                        maxLength={5}
+                        onValueChange={(value, name)=>{}}
+                        prefix={'$'}
+                        className={'price-input'}
+                        />
+                    </div>
+                </div>
+            </form>
         </div>
-    </div>
   )
 }
 
